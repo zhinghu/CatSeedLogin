@@ -21,13 +21,13 @@ public class BufferStatement {
 	 *            The values to replace <bold>?</bold> with in
 	 *            <bold>query</bold>. These are in order.
 	 */
+	private static final Exception sharedException = new Exception();
+
 	public BufferStatement(String query, Object... values) {
 		this.query = query;
 		this.values = values;
-		// For error handling
-		this.stacktrace = new Exception();
-		this.stacktrace.fillInStackTrace(); // We can declare where this
-											// statement came from.
+		this.stacktrace = sharedException; // 重复利用一个已存在的 Exception 对象
+		this.stacktrace.fillInStackTrace();
 	}
 
 	/**
@@ -44,8 +44,9 @@ public class BufferStatement {
 	 */
 	public PreparedStatement prepareStatement(Connection con) throws SQLException {
 		PreparedStatement ps;
+		int valuesLength = values.length; // 缓存数组长度
 		ps = con.prepareStatement(query);
-		for (int i = 0; i < values.length; i++) {
+		for (int i = 0; i < valuesLength; i++) {
 			ps.setObject(i + 1, values[i]);
 		}
 		return ps;
@@ -70,6 +71,8 @@ public class BufferStatement {
 	 */
 	@Override
 	public String toString() {
-		return "Query: " + query + ", values: " + Arrays.toString(values);
+		StringBuilder sb = new StringBuilder();
+		sb.append("Query: ").append(query).append(", values: ").append(Arrays.toString(values));
+		return sb.toString();
 	}
 }
