@@ -25,6 +25,9 @@ public class CommandBindEmail implements CommandExecutor {
         if (args.length == 0 || !(sender instanceof Player)) return false;
         Player player = (Player) sender;
         String name = player.getName();
+        if (Config.Settings.BedrockLoginBypass && LoginPlayerHelper.isFloodgatePlayer(player)){
+            return true;
+        }
         LoginPlayer lp = Cache.getIgnoreCase(name);
 
         if (lp == null) {

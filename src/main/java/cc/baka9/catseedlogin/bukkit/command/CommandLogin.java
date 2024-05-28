@@ -20,6 +20,9 @@ public class CommandLogin implements CommandExecutor {
         if (args.length == 0 || !(sender instanceof Player)) return false;
         Player player = (Player) sender;
         String name = player.getName();
+        if (Config.Settings.BedrockLoginBypass && LoginPlayerHelper.isFloodgatePlayer(player)){
+            return true;
+        }
         if (LoginPlayerHelper.isLogin(name)) {
             sender.sendMessage(Config.Language.LOGIN_REPEAT);
             return true;
