@@ -15,24 +15,22 @@ public class MySQL extends SQL {
     }
 
     @Override
-    public Connection getConnection() throws SQLException{
-
+    public Connection getConnection() throws SQLException {
         if (this.connection != null && !this.connection.isClosed() && this.connection.isValid(10)) {
             return this.connection;
         }
 
         try {
-            Class.forName("com.mysql.jdbc.Driver");
+            Class.forName("com.mysql.cj.jdbc.Driver"); // 修改此处加载驱动程序的方式
             this.connection = DriverManager.getConnection(
                     "jdbc:mysql://" + Config.MySQL.Host + ":" + Config.MySQL.Port + "/" + Config.MySQL.Database + "?characterEncoding=UTF-8",
                     Config.MySQL.User, Config.MySQL.Password
             );
             return this.connection;
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException | SQLException e) { // 增加SQLException处理
             e.printStackTrace();
             return null;
         }
-
     }
 
 }
