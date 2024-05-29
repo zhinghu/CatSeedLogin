@@ -12,50 +12,45 @@ import java.net.Socket;
  * bc 与 bukkit 的通讯交流
  */
 public class Communication {
+    private static final String HOST = Config.Host;
+    private static final int PORT = Config.Port;
 
     public static int sendConnectRequest(String playerName) {
         try (Socket socket = getSocket(); BufferedWriter bufferedWriter = getSocketBufferedWriter(socket)) {
-            // 请求类型
             bufferedWriter.write("Connect");
             bufferedWriter.newLine();
-            // 玩家名
             bufferedWriter.write(playerName);
             bufferedWriter.newLine();
-
             bufferedWriter.flush();
             return socket.getInputStream().read();
         } catch (IOException e) {
-            e.printStackTrace();
+            handleIOException(e);
         }
         return 0;
     }
 
     public static void sendKeepLoggedInRequest(String playerName) {
         try (Socket socket = getSocket(); BufferedWriter bufferedWriter = getSocketBufferedWriter(socket)) {
-            // 请求类型
             bufferedWriter.write("KeepLoggedIn");
             bufferedWriter.newLine();
-            // 玩家名
             bufferedWriter.write(playerName);
             bufferedWriter.newLine();
-            // 时间戳
-            String time = String.valueOf(System.currentTimeMillis());
+            long currentTime = System.currentTimeMillis();
+            String time = String.valueOf(currentTime);
             bufferedWriter.write(time);
             bufferedWriter.newLine();
-            // 根据玩家名，时间戳，和authKey加密的结果（加密是因为如果登录服不在内网环境下，则可能会被人使用这个功能给发包来绕过登录）
             String sign = CommunicationAuth.encryption(playerName, time, Config.AuthKey);
             bufferedWriter.write(sign);
             bufferedWriter.newLine();
-
             bufferedWriter.flush();
         } catch (IOException e) {
-            e.printStackTrace();
+            handleIOException(e);
         }
     }
 
     private static Socket getSocket() throws IOException {
         try {
-            return new Socket(Config.Host, Config.Port);
+            return new Socket(HOST, PORT);
         } catch (IOException e) {
             ProxyServer.getInstance().getLogger().warning("§c请检查装载登录插件的子服是否在 bungeecord.yml 中开启了bungeecord功能，以及Host和Port是否与bc端的配置相同");
             throw new IOException(e);
@@ -66,5 +61,7 @@ public class Communication {
         return new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
     }
 
-
+    private static void handleIOException(IOException e) {
+        ProxyServer.getInstance().getLogger().severe("发生 I/O 异常: " + e.getMessage());
+    }
 }
