@@ -61,7 +61,7 @@ public class LoginPlayerHelper {
             if (Config.Settings.BedrockLoginBypass && isFloodgatePlayer(name)){
                 return true;
             }
-            if (Config.Settings.LoginwiththesameIP && getLastLoginTime(name)){
+            if (Config.Settings.LoginwiththesameIP && recordCurrentIP(name)){
                 return true;
             }
             for (LoginPlayer lp : set) {
@@ -77,20 +77,20 @@ public class LoginPlayerHelper {
         if (Config.Settings.BedrockLoginBypass && isFloodgatePlayer(name)){
             return true;
         }
-        if (Config.Settings.LoginwiththesameIP && getLastLoginTime(name)){
+        if (Config.Settings.LoginwiththesameIP && recordCurrentIP(name)){
             return true;
         }
         return Cache.getIgnoreCase(name) != null;
 
     }
 
-    public static boolean getLastLoginTime(String name) {
+    public static boolean recordCurrentIP(String name) {
         Player player = Bukkit.getPlayerExact(name);
-        return player != null && getLastLoginTime(player);
+        return player != null && recordCurrentIP(player);
     }
 
-    public static boolean getLastLoginTime(Player player) {
-        return Bukkit.getPluginManager().getPlugin("floodgate") != null && FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId());
+    public static boolean recordCurrentIP(Player player) {
+        return player.hasMetadata("LastLoginTime") && player.getMetadata("LastLoginTime").size() > 0;
     }
 
 
@@ -107,12 +107,12 @@ public class LoginPlayerHelper {
         return Bukkit.getPluginManager().getPlugin("floodgate") != null && FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId());
     }
 
-    public static boolean isLastLoginTime(String name) {
+    public static Long getLastLoginTime(String name) {
         LoginPlayer loginPlayer = Cache.getIgnoreCase(name);
         if (loginPlayer == null) {
-            return false;
+            return null;
         }
-        return loginPlayer.getLastAction() != 0;
+        return loginPlayer.getLastAction();
     }
 
     // 记录登录IP

@@ -24,7 +24,7 @@ public class CommandLogin implements CommandExecutor {
         if (Config.Settings.BedrockLoginBypass && LoginPlayerHelper.isFloodgatePlayer(player)){
             return true;
         }
-        if (Config.Settings.LoginwiththesameIP && LoginPlayerHelper.getLastLoginTime(player)){
+        if (Config.Settings.LoginwiththesameIP && LoginPlayerHelper.recordCurrentIP(player)){
             return true;
         }
         if (LoginPlayerHelper.isLogin(name)) {

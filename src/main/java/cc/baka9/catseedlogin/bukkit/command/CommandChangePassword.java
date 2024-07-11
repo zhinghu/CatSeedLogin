@@ -26,7 +26,7 @@ public class CommandChangePassword implements CommandExecutor {
         if (Config.Settings.BedrockLoginBypass && LoginPlayerHelper.isFloodgatePlayer((Player) sender)){
             return true;
         }
-        if (Config.Settings.LoginwiththesameIP && LoginPlayerHelper.getLastLoginTime((Player) sender)){
+        if (Config.Settings.LoginwiththesameIP && LoginPlayerHelper.recordCurrentIP((Player) sender)){
             return true;
         }
         LoginPlayer lp = Cache.getIgnoreCase(name);
