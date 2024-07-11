@@ -1,5 +1,22 @@
 package cc.baka9.catseedlogin.bukkit;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Properties;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -7,14 +24,6 @@ import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-
-import java.io.*;
-import java.lang.reflect.Field;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.*;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * 加载/保存/重载 yml配置文件
@@ -75,6 +84,7 @@ public class Config {
         public static Location SpawnLocation;
         public static boolean LimitChineseID;
         public static boolean BedrockLoginBypass;
+        public static boolean LoginwiththesameIP;
         public static int MaxLengthID;
         public static int MinLengthID;
         public static boolean BeforeLoginNoDamage;
@@ -96,6 +106,7 @@ public class Config {
             LimitChineseID = config.getBoolean("LimitChineseID", resourceConfig.getBoolean("LimitChineseID"));
             MinLengthID = config.getInt("MinLengthID", resourceConfig.getInt("MinLengthID"));
             BedrockLoginBypass = config.getBoolean("BedrockLoginBypass", resourceConfig.getBoolean("BedrockLoginBypass"));
+            LoginwiththesameIP = config.getBoolean("LoginwiththesameIP", resourceConfig.getBoolean("LoginwiththesameIP"));
             MaxLengthID = config.getInt("MaxLengthID", resourceConfig.getInt("MaxLengthID"));
             BeforeLoginNoDamage = config.getBoolean("BeforeLoginNoDamage", resourceConfig.getBoolean("BeforeLoginNoDamage"));
             ReenterInterval = config.getLong("ReenterInterval", resourceConfig.getLong("ReenterInterval"));
@@ -122,6 +133,7 @@ public class Config {
             config.set("SpawnWorld", null);
             config.set("LimitChineseID", LimitChineseID);
             config.set("BedrockLoginBypass",BedrockLoginBypass);
+            config.set("LoginwiththesameIP",LoginwiththesameIP);
             config.set("MinLengthID", MinLengthID);
             config.set("MaxLengthID", MaxLengthID);
             config.set("BeforeLoginNoDamage", BeforeLoginNoDamage);
@@ -175,6 +187,7 @@ public class Config {
         public static String AUTO_KICK;
         public static String REGISTER_MORE;
         public static String BEDROCK_LOGIN_BYPASS;
+        public static String LOGIN_WITH_THE_SAME_IP;
 
         public static void load(){
             FileConfiguration resourceConfig = getResourceConfig("language.yml");

@@ -61,6 +61,9 @@ public class LoginPlayerHelper {
             if (Config.Settings.BedrockLoginBypass && isFloodgatePlayer(name)){
                 return true;
             }
+            if (Config.Settings.LoginwiththesameIP && getLastLoginTime(name)){
+                return true;
+            }
             for (LoginPlayer lp : set) {
                 if (lp.getName().equals(name)) {
                     return true;
@@ -74,9 +77,26 @@ public class LoginPlayerHelper {
         if (Config.Settings.BedrockLoginBypass && isFloodgatePlayer(name)){
             return true;
         }
+        if (Config.Settings.LoginwiththesameIP && getLastLoginTime(name)){
+            return true;
+        }
         return Cache.getIgnoreCase(name) != null;
 
     }
+
+    public static boolean getLastLoginTime(String name) {
+        Player player = Bukkit.getPlayerExact(name);
+        return player != null && getLastLoginTime(player);
+    }
+
+    public static boolean getLastLoginTime(Player player) {
+        return Bukkit.getPluginManager().getPlugin("floodgate") != null && FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId());
+    }
+
+
+
+
+
 
     public static boolean isFloodgatePlayer(String name) {
         Player player = Bukkit.getPlayerExact(name);
@@ -87,12 +107,12 @@ public class LoginPlayerHelper {
         return Bukkit.getPluginManager().getPlugin("floodgate") != null && FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId());
     }
 
-    public static Long getLastLoginTime(String name) {
+    public static boolean isLastLoginTime(String name) {
         LoginPlayer loginPlayer = Cache.getIgnoreCase(name);
         if (loginPlayer == null) {
-            return null;
+            return false;
         }
-        return loginPlayer.getLastAction();
+        return loginPlayer.getLastAction() != 0;
     }
 
     // 记录登录IP

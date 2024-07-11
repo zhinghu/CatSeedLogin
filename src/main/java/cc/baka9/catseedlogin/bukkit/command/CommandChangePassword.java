@@ -1,19 +1,20 @@
 package cc.baka9.catseedlogin.bukkit.command;
 
-import cc.baka9.catseedlogin.bukkit.CatSeedLogin;
-import cc.baka9.catseedlogin.bukkit.Config;
-import cc.baka9.catseedlogin.util.Crypt;
-import cc.baka9.catseedlogin.util.Util;
-import cc.baka9.catseedlogin.bukkit.database.Cache;
-import cc.baka9.catseedlogin.bukkit.object.LoginPlayer;
-import cc.baka9.catseedlogin.bukkit.object.LoginPlayerHelper;
+import java.util.Objects;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.Objects;
+import cc.baka9.catseedlogin.bukkit.CatSeedLogin;
+import cc.baka9.catseedlogin.bukkit.Config;
+import cc.baka9.catseedlogin.bukkit.database.Cache;
+import cc.baka9.catseedlogin.bukkit.object.LoginPlayer;
+import cc.baka9.catseedlogin.bukkit.object.LoginPlayerHelper;
+import cc.baka9.catseedlogin.util.Crypt;
+import cc.baka9.catseedlogin.util.Util;
 
 public class CommandChangePassword implements CommandExecutor {
     @Override
@@ -23,6 +24,9 @@ public class CommandChangePassword implements CommandExecutor {
         }
         String name = sender.getName();
         if (Config.Settings.BedrockLoginBypass && LoginPlayerHelper.isFloodgatePlayer((Player) sender)){
+            return true;
+        }
+        if (Config.Settings.LoginwiththesameIP && LoginPlayerHelper.getLastLoginTime((Player) sender)){
             return true;
         }
         LoginPlayer lp = Cache.getIgnoreCase(name);

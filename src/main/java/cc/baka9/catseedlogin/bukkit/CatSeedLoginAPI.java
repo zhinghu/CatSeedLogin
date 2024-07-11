@@ -36,7 +36,7 @@ public class CatSeedLoginAPI {
      * @return 时间戳- 未注册为null
      * @since 1.4.2
      */
-    public static Long getLastLoginTime(String name) {
+    public static boolean getLastLoginTime(String name) {
         return LoginPlayerHelper.getLastLoginTime(name);
     }
 

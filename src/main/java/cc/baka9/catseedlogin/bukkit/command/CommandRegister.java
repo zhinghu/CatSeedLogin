@@ -1,5 +1,13 @@
 package cc.baka9.catseedlogin.bukkit.command;
 
+import java.util.List;
+
+import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
 import cc.baka9.catseedlogin.bukkit.CatSeedLogin;
 import cc.baka9.catseedlogin.bukkit.Config;
 import cc.baka9.catseedlogin.bukkit.database.Cache;
@@ -7,13 +15,6 @@ import cc.baka9.catseedlogin.bukkit.event.CatSeedPlayerRegisterEvent;
 import cc.baka9.catseedlogin.bukkit.object.LoginPlayer;
 import cc.baka9.catseedlogin.bukkit.object.LoginPlayerHelper;
 import cc.baka9.catseedlogin.util.Util;
-import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
-import java.util.List;
 
 public class CommandRegister implements CommandExecutor {
 
@@ -23,6 +24,9 @@ public class CommandRegister implements CommandExecutor {
         Player player = (Player) sender;
         String name = sender.getName();
         if (Config.Settings.BedrockLoginBypass && LoginPlayerHelper.isFloodgatePlayer(player)){
+            return true;
+        }
+        if (Config.Settings.LoginwiththesameIP && LoginPlayerHelper.getLastLoginTime(player)){
             return true;
         }
         if (LoginPlayerHelper.isLogin(name)) {

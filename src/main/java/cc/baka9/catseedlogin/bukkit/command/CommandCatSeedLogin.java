@@ -1,5 +1,15 @@
 package cc.baka9.catseedlogin.bukkit.command;
 
+import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
 import cc.baka9.catseedlogin.bukkit.CatSeedLogin;
 import cc.baka9.catseedlogin.bukkit.Communication;
 import cc.baka9.catseedlogin.bukkit.Config;
@@ -9,15 +19,6 @@ import cc.baka9.catseedlogin.bukkit.database.SQLite;
 import cc.baka9.catseedlogin.bukkit.object.LoginPlayer;
 import cc.baka9.catseedlogin.bukkit.object.LoginPlayerHelper;
 import cc.baka9.catseedlogin.util.Util;
-import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
-import java.util.List;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class CommandCatSeedLogin implements CommandExecutor {
     @Override
@@ -28,6 +29,7 @@ public class CommandCatSeedLogin implements CommandExecutor {
                 || setIpCountLimit(sender, args)
                 || limitChineseID(sender, args)
                 || bedrockLoginBypass(sender, args)
+                || LoginwiththesameIP(sender, args)
                 || setIdLength(sender, args)
                 || beforeLoginNoDamage(sender, args)
                 || setReenterInterval(sender, args)
@@ -208,6 +210,16 @@ public class CommandCatSeedLogin implements CommandExecutor {
             Config.Settings.BedrockLoginBypass = !Config.Settings.BedrockLoginBypass;
             Config.Settings.save();
             sender.sendMessage("§e基岩版玩家登录跳过 " + (Config.Settings.BedrockLoginBypass ? "§a开启" : "§8关闭"));
+            return true;
+        }
+        return false;
+    }
+
+    private boolean LoginwiththesameIP(CommandSender sender, String[] args){
+        if (args.length > 0 && args[0].equalsIgnoreCase("LoginwiththesameIP")) {
+            Config.Settings.LoginwiththesameIP = !Config.Settings.LoginwiththesameIP;
+            Config.Settings.save();
+            sender.sendMessage("§e同一IP玩家登录跳过 " + (Config.Settings.LoginwiththesameIP ? "§a开启" : "§8关闭"));
             return true;
         }
         return false;
