@@ -77,9 +77,6 @@ public class LoginPlayerHelper {
         if (Config.Settings.BedrockLoginBypass && isFloodgatePlayer(name)){
             return true;
         }
-        if (Config.Settings.LoginwiththesameIP && recordCurrentIP(name)){
-            return true;
-        }
         return Cache.getIgnoreCase(name) != null;
 
     }
@@ -90,7 +87,7 @@ public class LoginPlayerHelper {
     }
 
     public static boolean recordCurrentIP(Player player) {
-        return player.hasMetadata("LastLoginTime") && player.getMetadata("LastLoginTime").size() > 0;
+        return true;
     }
 
 
