@@ -86,9 +86,17 @@ public class LoginPlayerHelper {
         return player != null && recordCurrentIP(player);
     }
 
-    public static boolean recordCurrentIP(Player player) {
-        return false;
-    }
+public static boolean recordCurrentIP(Player player) {
+    String playerName = player.getName();
+    String recordCurrentIP = player.getAddress().getAddress().getHostAddress();
+    long getLastLoginTime = System.currentTimeMillis();
+    boolean isRegistered = Cache.getIgnoreCase(playerName) != null;
+
+    // 记录 IP 和时间以及是否注册
+    // 这里可以添加记录逻辑
+
+    return isRegistered;
+}
 
 
 
