@@ -87,7 +87,7 @@ public class LoginPlayerHelper {
     }
 
     public static boolean recordCurrentIP(Player player) {
-        return true;
+        return false;
     }
 
 
