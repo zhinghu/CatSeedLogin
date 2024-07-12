@@ -87,27 +87,34 @@ public class LoginPlayerHelper {
     }
 
     public static boolean recordCurrentIP(Player player) {
-        String playerName = player.getName();
-        String currentIP = player.getAddress().getAddress().getHostAddress();
-        long currentTime = System.currentTimeMillis();
-        LoginPlayer loginPlayer = Cache.getIgnoreCase(playerName);
+    String playerName = player.getName();
+    String currentIP = player.getAddress().getAddress().getHostAddress();
+    long currentTime = System.currentTimeMillis();
+    LoginPlayer loginPlayer = Cache.getIgnoreCase(playerName);
 
-        if (loginPlayer != null) {
-            String lastIP = loginPlayer.getLastIP();
-            long lastLoginTime = loginPlayer.getLastAction();
-            long timeDifference = currentTime - lastLoginTime;
-            long timeout = Config.Settings.IPTimeout * 1000; // 转换为毫秒
+    if (loginPlayer != null) {
+        String lastIP = loginPlayer.getLastIP();
+        long lastLoginTime = loginPlayer.getLastAction();
+        long timeDifference = currentTime - lastLoginTime;
+        long timeoutInMillis = Config.Settings.IPTimeout * 1000; // 转换为毫秒
 
-            if (!currentIP.equals(lastIP) || timeDifference > timeout) {
-                return false;
-            }
+        if (!currentIP.equals(lastIP) || timeDifference > timeoutInMillis) {
+            return false;
         }
-
-        // 记录 IP 和时间以及是否注册
-        // 这里可以添加记录逻辑
-
-        return true;
     }
+    return true;
+}
+
+public static List<String> getStoredIPs(LoginPlayer lp) {
+    List<String> storedIPs = new ArrayList<>();
+
+    String ipsString = lp.getIps();
+    String[] ipsArray = ipsString.split(";");
+
+    storedIPs.addAll(Arrays.asList(ipsArray));
+
+    return storedIPs;
+}
 
 
 
