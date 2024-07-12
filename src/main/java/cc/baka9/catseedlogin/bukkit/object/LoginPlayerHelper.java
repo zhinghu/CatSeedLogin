@@ -100,7 +100,7 @@ public static boolean recordCurrentIP(Player player) {
         long lastLoginTime = loginPlayer.getLastAction();
         long timeoutInTicks = (Config.Settings.IPTimeout * 60 * 1000) / 50;
 
-        if (storedIPs.contains(currentIP) || (currentTime - lastLoginTime) <= timeoutInTicks) {
+        if (storedIPs.contains(currentIP) && (currentTime - lastLoginTime) <= timeoutInTicks) {
             return true;
         }
     }
