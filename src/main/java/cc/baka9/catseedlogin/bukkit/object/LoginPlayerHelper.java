@@ -96,9 +96,9 @@ public class LoginPlayerHelper {
         List<String> storedIPs = getStoredIPs(loginPlayer);
         long lastLoginTime = loginPlayer.getLastAction();
         long timeDifference = currentTime - lastLoginTime;
-        long timeoutInMillis = Config.Settings.IPTimeout * 1000; // 转换为毫秒
+        long timeoutInTicks = (Config.Settings.IPTimeout * 60 * 1000) / 50;
 
-        if (!currentIP.equals(storedIPs) || timeDifference > timeoutInMillis) {
+        if (!currentIP.equals(storedIPs) || timeDifference > timeoutInTicks) {
             return false;
         }
     }

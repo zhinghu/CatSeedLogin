@@ -3,6 +3,7 @@ IpCountLimit: 2
 LimitChineseID: true
 BedrockLoginBypass: true
 LoginwiththesameIP: 0
+IPTimeout: 2
 MinLengthID: 2
 MaxLengthID: 15
 BeforeLoginNoDamage: true
