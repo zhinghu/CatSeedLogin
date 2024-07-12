@@ -86,7 +86,7 @@ public class LoginPlayerHelper {
         return player != null && recordCurrentIP(player);
     }
 
-    public static boolean recordCurrentIP(Player player) {
+public static boolean recordCurrentIP(Player player) {
     String playerName = player.getName();
     String currentIP = player.getAddress().getAddress().getHostAddress();
     long currentTime = System.currentTimeMillis();
@@ -98,11 +98,11 @@ public class LoginPlayerHelper {
         long timeDifference = currentTime - lastLoginTime;
         long timeoutInTicks = (Config.Settings.IPTimeout * 60 * 1000) / 50;
 
-        if (!currentIP.equals(storedIPs) || timeDifference > timeoutInTicks) {
-            return false;
+        if (storedIPs.contains(currentIP) && timeDifference <= timeoutInTicks) {
+            return true;
         }
     }
-    return true;
+    return false;
 }
 
 public static List<String> getStoredIPs(LoginPlayer lp) {
