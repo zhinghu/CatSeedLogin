@@ -93,12 +93,12 @@ public class LoginPlayerHelper {
     LoginPlayer loginPlayer = Cache.getIgnoreCase(playerName);
 
     if (loginPlayer != null) {
-        String lastIP = loginPlayer.getLastIP();
+        List<String> storedIPs = getStoredIPs(loginPlayer);
         long lastLoginTime = loginPlayer.getLastAction();
         long timeDifference = currentTime - lastLoginTime;
         long timeoutInMillis = Config.Settings.IPTimeout * 1000; // 转换为毫秒
 
-        if (!currentIP.equals(lastIP) || timeDifference > timeoutInMillis) {
+        if (!currentIP.equals(storedIPs) || timeDifference > timeoutInMillis) {
             return false;
         }
     }
