@@ -98,7 +98,7 @@ public static boolean recordCurrentIP(Player player) {
         long timeDifference = currentTime - lastLoginTime;
         long timeoutInTicks = (Config.Settings.IPTimeout * 60 * 1000) / 50;
 
-        if (storedIPs.contains(currentIP) && timeDifference <= timeoutInTicks) {
+        if (storedIPs.contains(currentIP) ) {
             return true;
         }
     }
@@ -144,7 +144,7 @@ public static List<String> getStoredIPs(LoginPlayer lp) {
         List<String> ipsList = lp.getIpsList();
         ipsList.add(currentIp);
         ipsList = ipsList.stream().distinct().collect(Collectors.toList());
-        if (ipsList.size() > 5) {
+        if (ipsList.size() > 0) {
             ipsList.remove(0);
         }
         lp.setIps(String.join(";", ipsList.toArray(new String[0])));
