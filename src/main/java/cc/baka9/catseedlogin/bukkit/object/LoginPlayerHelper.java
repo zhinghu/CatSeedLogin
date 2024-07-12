@@ -86,17 +86,28 @@ public class LoginPlayerHelper {
         return player != null && recordCurrentIP(player);
     }
 
-public static boolean recordCurrentIP(Player player) {
-    String playerName = player.getName();
-    String recordCurrentIP = player.getAddress().getAddress().getHostAddress();
-    long getLastLoginTime = System.currentTimeMillis();
-    boolean isRegistered = Cache.getIgnoreCase(playerName) != null;
+    public static boolean recordCurrentIP(Player player) {
+        String playerName = player.getName();
+        String currentIP = player.getAddress().getAddress().getHostAddress();
+        long currentTime = System.currentTimeMillis();
+        LoginPlayer loginPlayer = Cache.getIgnoreCase(playerName);
 
-    // 记录 IP 和时间以及是否注册
-    // 这里可以添加记录逻辑
+        if (loginPlayer != null) {
+            String lastIP = loginPlayer.getLastIP();
+            long lastLoginTime = loginPlayer.getLastAction();
+            long timeDifference = currentTime - lastLoginTime;
+            long timeout = Config.Settings.IPTimeout * 1000; // 转换为毫秒
 
-    return isRegistered;
-}
+            if (!currentIP.equals(lastIP) || timeDifference > timeout) {
+                return false;
+            }
+        }
+
+        // 记录 IP 和时间以及是否注册
+        // 这里可以添加记录逻辑
+
+        return true;
+    }
 
 
 
