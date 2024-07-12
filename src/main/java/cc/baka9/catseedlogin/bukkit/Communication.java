@@ -1,12 +1,5 @@
 package cc.baka9.catseedlogin.bukkit;
 
-import cc.baka9.catseedlogin.bukkit.database.Cache;
-import cc.baka9.catseedlogin.bukkit.object.LoginPlayer;
-import cc.baka9.catseedlogin.bukkit.object.LoginPlayerHelper;
-import cc.baka9.catseedlogin.util.CommunicationAuth;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -14,6 +7,14 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
+import cc.baka9.catseedlogin.bukkit.database.Cache;
+import cc.baka9.catseedlogin.bukkit.object.LoginPlayer;
+import cc.baka9.catseedlogin.bukkit.object.LoginPlayerHelper;
+import cc.baka9.catseedlogin.util.CommunicationAuth;
 
 /**
  * bukkit 与 bc 的通讯交流
@@ -75,24 +76,29 @@ public class Communication {
     /**
      * 处理请求
      */
-    private static void handleRequest(Socket socket) throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        String requestType = bufferedReader.readLine();
-        String playerName = bufferedReader.readLine();
-        switch (requestType) {
-            case "Connect":
-                handleConnectRequest(socket, playerName);
-                break;
-            case "KeepLoggedIn":
-                String time = bufferedReader.readLine();
-                String sign = bufferedReader.readLine();
-                handleKeepLoggedInRequest(playerName, time, sign);
-                socket.close();
-                break;
-            default:
-                break;
-        }
+private static void handleRequest(Socket socket) throws IOException {
+    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+    String requestType = bufferedReader.readLine();
+    String playerName = bufferedReader.readLine();
+    switch (requestType) {
+        case "Connect":
+            handleConnectRequest(socket, playerName);
+            break;
+        case "KeepLoggedIn":
+            String time = bufferedReader.readLine();
+            String sign = bufferedReader.readLine();
+            handleKeepLoggedInRequest(playerName, time, sign);
+            socket.close();
+            break;
+        default:
+            break;
     }
+
+    if (playerName != null) {
+        playerName.hashCode();
+    } else {
+    }
+}
 
     private static void handleKeepLoggedInRequest(String playerName, String time, String sign) {
         // 验证请求的合法性
