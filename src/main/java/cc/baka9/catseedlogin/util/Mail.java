@@ -1,22 +1,21 @@
 package cc.baka9.catseedlogin.util;
 
-
-import cc.baka9.catseedlogin.bukkit.Config;
+import java.util.Date;
+import java.util.Properties;
 
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.util.Date;
-import java.util.Properties;
+
+import cc.baka9.catseedlogin.bukkit.Config;
 
 public class Mail {
 
-    private Mail(){
+    private Mail() {
     }
 
-
-    public static void sendMail(String receiveMailAccount, String subject, String content) throws Exception{
+    public static void sendMail(String receiveMailAccount, String subject, String content) throws Exception {
 
         Properties props = new Properties();
         props.setProperty("mail.transport.protocol", "smtp");
@@ -30,6 +29,11 @@ public class Mail {
             props.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
             props.setProperty("mail.smtp.socketFactory.fallback", "false");
             props.setProperty("mail.smtp.socketFactory.port", smtpPort);
+        } else {
+            // 如果 SSLAuthVerify 为 false，移除 SSL 相关的配置
+            props.remove("mail.smtp.socketFactory.class");
+            props.remove("mail.smtp.socketFactory.fallback");
+            props.remove("mail.smtp.socketFactory.port");
         }
 
         String emailAccount = Config.EmailVerify.EmailAccount;
