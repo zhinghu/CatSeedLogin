@@ -89,21 +89,26 @@ public class LoginPlayerHelper {
 public static boolean recordCurrentIP(Player player) {
     String playerName = player.getName();
     String currentIP = player.getAddress() != null ? player.getAddress().getAddress().getHostAddress() : null;
+
     if (currentIP == null) {
         return false;
     }
+
     long currentTime = System.currentTimeMillis();
     LoginPlayer loginPlayer = Cache.getIgnoreCase(playerName);
 
     if (loginPlayer != null) {
         List<String> storedIPs = getStoredIPs(loginPlayer);
-        long lastLoginTime = loginPlayer.getLastAction();
-        long timeoutInTicks = (Config.Settings.IPTimeout * 60 * 1000) / 50;
+        if (storedIPs != null) {
+            long lastLoginTime = loginPlayer.getLastAction();
+            long timeoutInMilliseconds = Config.Settings.IPTimeout * 60 * 1000;
 
-        if (storedIPs.contains(currentIP) && (currentTime - lastLoginTime) <= timeoutInTicks) {
-            return true;
+            if (storedIPs.contains(currentIP) && (currentTime - lastLoginTime) <= timeoutInMilliseconds) {
+                return true;
+            }
         }
     }
+
     return false;
 }
 
