@@ -1,20 +1,26 @@
 package cc.baka9.catseedlogin.bukkit;
 
-import cc.baka9.catseedlogin.bukkit.command.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+
+import org.bukkit.Bukkit;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitScheduler;
+
+import cc.baka9.catseedlogin.bukkit.command.CommandBindEmail;
+import cc.baka9.catseedlogin.bukkit.command.CommandCatSeedLogin;
+import cc.baka9.catseedlogin.bukkit.command.CommandChangePassword;
+import cc.baka9.catseedlogin.bukkit.command.CommandLogin;
+import cc.baka9.catseedlogin.bukkit.command.CommandRegister;
+import cc.baka9.catseedlogin.bukkit.command.CommandResetPassword;
 import cc.baka9.catseedlogin.bukkit.database.Cache;
 import cc.baka9.catseedlogin.bukkit.database.MySQL;
 import cc.baka9.catseedlogin.bukkit.database.SQL;
 import cc.baka9.catseedlogin.bukkit.database.SQLite;
 import cc.baka9.catseedlogin.bukkit.object.LoginPlayerHelper;
 import cc.baka9.catseedlogin.bukkit.task.Task;
-import org.bukkit.Bukkit;
-import org.bukkit.command.PluginCommand;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitScheduler;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 
 public class CatSeedLogin extends JavaPlugin {
 
@@ -48,12 +54,14 @@ public class CatSeedLogin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new Listeners(), this);
 
         //ProtocolLibListeners
-        try {
-            Class.forName("com.comphenix.protocol.ProtocolLib");
-            ProtocolLibListeners.enable();
-            loadProtocolLib = true;
-        } catch (ClassNotFoundException e) {
-            getLogger().warning("服务器没有装载ProtocolLib插件，这将无法使用登录前隐藏背包");
+        if (Config.Settings.Emptybackpack) {
+            try {
+                Class.forName("com.comphenix.protocol.ProtocolLib");
+                ProtocolLibListeners.enable();
+                loadProtocolLib = true;
+            } catch (ClassNotFoundException e) {
+                getLogger().warning("服务器没有装载ProtocolLib插件，这将无法使用登录前隐藏背包");
+            }
         }
 
         // bc
