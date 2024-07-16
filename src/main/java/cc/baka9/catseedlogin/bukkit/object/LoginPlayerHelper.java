@@ -167,6 +167,7 @@ public static List<String> getStoredIPs(LoginPlayer lp) {
 
     // ProtocolLib发包空背包
     public static void sendBlankInventoryPacket(Player player){
+        if (!Config.Settings.Emptybackpack) return;
         ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
         PacketContainer inventoryPacket = protocolManager.createPacket(PacketType.Play.Server.WINDOW_ITEMS);
         inventoryPacket.getIntegers().write(0, 0);

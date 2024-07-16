@@ -85,6 +85,7 @@ public class Config {
         public static boolean LimitChineseID;
         public static boolean BedrockLoginBypass;
         public static boolean LoginwiththesameIP;
+        public static boolean Emptybackpack;
         public static int IPTimeout;
         public static int MaxLengthID;
         public static int MinLengthID;
@@ -108,6 +109,7 @@ public class Config {
             MinLengthID = config.getInt("MinLengthID", resourceConfig.getInt("MinLengthID"));
             BedrockLoginBypass = config.getBoolean("BedrockLoginBypass", resourceConfig.getBoolean("BedrockLoginBypass"));
             LoginwiththesameIP = config.getBoolean("LoginwiththesameIP", resourceConfig.getBoolean("LoginwiththesameIP"));
+            Emptybackpack = config.getBoolean("Emptybackpack", resourceConfig.getBoolean("Emptybackpack"));
             MaxLengthID = config.getInt("MaxLengthID", resourceConfig.getInt("MaxLengthID"));
             BeforeLoginNoDamage = config.getBoolean("BeforeLoginNoDamage", resourceConfig.getBoolean("BeforeLoginNoDamage"));
             ReenterInterval = config.getLong("ReenterInterval", resourceConfig.getLong("ReenterInterval"));
@@ -136,6 +138,7 @@ public class Config {
             config.set("LimitChineseID", LimitChineseID);
             config.set("BedrockLoginBypass",BedrockLoginBypass);
             config.set("LoginwiththesameIP",LoginwiththesameIP);
+            config.set("Emptybackpack",Emptybackpack);
             config.set("IPTimeout", IPTimeout);
             config.set("MinLengthID", MinLengthID);
             config.set("MaxLengthID", MaxLengthID);
