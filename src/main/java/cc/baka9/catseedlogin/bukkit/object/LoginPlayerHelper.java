@@ -166,30 +166,30 @@ public static List<String> getStoredIPs(LoginPlayer lp) {
     }
 
     // ProtocolLib发包空背包
-    public static void sendBlankInventoryPacket(Player player){
-        if (!Config.Settings.Emptybackpack) return;
-        ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
-        PacketContainer inventoryPacket = protocolManager.createPacket(PacketType.Play.Server.WINDOW_ITEMS);
-        inventoryPacket.getIntegers().write(0, 0);
-        int inventorySize = 45;
+    public static void sendBlankInventoryPacket(Player player) {
+    if (!Config.Settings.Emptybackpack) return;
 
-        ItemStack[] blankInventory = new ItemStack[inventorySize];
-        Arrays.fill(blankInventory, new ItemStack(Material.AIR));
+    ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
+    PacketContainer inventoryPacket = protocolManager.createPacket(PacketType.Play.Server.WINDOW_ITEMS);
+    inventoryPacket.getIntegers().write(0, 0);
 
+    int inventorySize = 45;
+    ItemStack[] blankInventory = new ItemStack[inventorySize];
+    Arrays.fill(blankInventory, new ItemStack(Material.AIR));
 
+    try {
         StructureModifier<ItemStack[]> itemArrayModifier = inventoryPacket.getItemArrayModifier();
         if (itemArrayModifier.size() > 0) {
             itemArrayModifier.write(0, blankInventory);
         } else {
-
             StructureModifier<List<ItemStack>> itemListModifier = inventoryPacket.getItemListModifier();
             itemListModifier.write(0, Arrays.asList(blankInventory));
         }
 
-        try {
-            protocolManager.sendServerPacket(player, inventoryPacket, false);
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        protocolManager.sendServerPacket(player, inventoryPacket, false);
+    } catch (InvocationTargetException e) {
+        e.printStackTrace();
     }
+}
+
 }
