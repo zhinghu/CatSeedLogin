@@ -77,26 +77,25 @@ public class Communication {
      * 处理请求
      */
 private static void handleRequest(Socket socket) throws IOException {
-    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-    String requestType = bufferedReader.readLine();
-    String playerName = bufferedReader.readLine();
-    switch (requestType) {
-        case "Connect":
-            handleConnectRequest(socket, playerName);
-            break;
-        case "KeepLoggedIn":
-            String time = bufferedReader.readLine();
-            String sign = bufferedReader.readLine();
-            handleKeepLoggedInRequest(playerName, time, sign);
+    try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+        String requestType = bufferedReader.readLine();
+        String playerName = bufferedReader.readLine();
+        switch (requestType) {
+            case "Connect":
+                handleConnectRequest(socket, playerName);
+                break;
+            case "KeepLoggedIn":
+                String time = bufferedReader.readLine();
+                String sign = bufferedReader.readLine();
+                handleKeepLoggedInRequest(playerName, time, sign);
+                break;
+            default:
+                break;
+        }
+    } finally {
+        if (!socket.isClosed()) {
             socket.close();
-            break;
-        default:
-            break;
-    }
-
-    if (playerName != null) {
-        playerName.hashCode();
-    } else {
+        }
     }
 }
 
