@@ -79,6 +79,10 @@ public class Communication {
 private static void handleRequest(Socket socket) throws IOException {
     try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
         String requestType = bufferedReader.readLine();
+        if (requestType == null) {
+            socket.close();
+            return;
+        }
         String playerName = bufferedReader.readLine();
         switch (requestType) {
             case "Connect":
