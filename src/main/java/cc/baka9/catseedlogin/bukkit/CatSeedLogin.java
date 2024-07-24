@@ -20,18 +20,19 @@ import cc.baka9.catseedlogin.bukkit.database.SQL;
 import cc.baka9.catseedlogin.bukkit.database.SQLite;
 import cc.baka9.catseedlogin.bukkit.object.LoginPlayerHelper;
 import cc.baka9.catseedlogin.bukkit.task.Task;
+import space.arim.morepaperlib.MorePaperLib;
 
 public class CatSeedLogin extends JavaPlugin {
 
     public static CatSeedLogin instance;
     public static SQL sql;
     public static boolean loadProtocolLib = false;
-    public static boolean folia = CatScheduler.folia;
+    public static MorePaperLib morePaperLib;
 
     @Override
     public void onEnable(){
         instance = this;
-        if (folia) getLogger().warning("检测到Folia,注意目前版本对Folia的支持还不稳定！");
+        morePaperLib = new MorePaperLib(this);
         //Config
         try {
             Config.load();

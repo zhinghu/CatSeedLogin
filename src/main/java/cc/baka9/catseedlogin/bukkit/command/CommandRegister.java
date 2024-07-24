@@ -68,7 +68,7 @@ public class CommandRegister implements CommandExecutor {
                         Bukkit.getServer().getPluginManager().callEvent(event);
                     });
                     sender.sendMessage(Config.Language.REGISTER_SUCCESS);
-                    player.updateInventory();
+                    CatScheduler.updateInventory(player);
                     LoginPlayerHelper.recordCurrentIP(player, lp);
                 }
 
