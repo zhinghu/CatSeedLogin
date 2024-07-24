@@ -8,6 +8,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import cc.baka9.catseedlogin.bukkit.CatScheduler;
 import cc.baka9.catseedlogin.bukkit.Config;
 import cc.baka9.catseedlogin.bukkit.database.Cache;
 import cc.baka9.catseedlogin.bukkit.event.CatSeedPlayerLoginEvent;
@@ -44,7 +45,7 @@ public class CommandLogin implements CommandExecutor {
             player.updateInventory();
             LoginPlayerHelper.recordCurrentIP(player, lp);
             if (Config.Settings.AfterLoginBack && Config.Settings.CanTpSpawnLocation) {
-                Config.getOfflineLocation(player).ifPresent(player::teleport);
+                Config.getOfflineLocation(player).ifPresent(location -> CatScheduler.teleport(player,location));
             }
         } else {
             sender.sendMessage(Config.Language.LOGIN_FAIL);

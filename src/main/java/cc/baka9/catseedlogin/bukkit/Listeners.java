@@ -168,7 +168,7 @@ public class Listeners implements Listener {
         }
 
         if (Config.Settings.CanTpSpawnLocation) {
-            player.teleport(Config.Settings.SpawnLocation);
+            CatScheduler.teleport(player,Config.Settings.SpawnLocation);
         } else {
             event.setCancelled(true);
         }
@@ -182,7 +182,7 @@ public class Listeners implements Listener {
             if (!player.isDead() || Config.Settings.DeathStateQuitRecordLocation) {
                 Config.setOfflineLocation(player);
             }
-            Bukkit.getScheduler().runTaskLater(CatSeedLogin.instance, () -> LoginPlayerHelper.remove(player.getName()), Config.Settings.ReenterInterval);
+            CatScheduler.runTaskLater(() -> LoginPlayerHelper.remove(player.getName()), Config.Settings.ReenterInterval);
         }
         Task.getTaskAutoKick().playerJoinTime.remove(player.getName());
 
@@ -201,7 +201,7 @@ public class Listeners implements Listener {
         }
         Cache.refresh(p.getName());
         if (Config.Settings.CanTpSpawnLocation) {
-            p.teleport(Config.Settings.SpawnLocation);
+            CatScheduler.teleport(p,Config.Settings.SpawnLocation);
         }
     }
 

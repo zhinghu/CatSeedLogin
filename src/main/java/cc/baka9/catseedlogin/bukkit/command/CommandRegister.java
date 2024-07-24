@@ -8,6 +8,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import cc.baka9.catseedlogin.bukkit.CatScheduler;
 import cc.baka9.catseedlogin.bukkit.CatSeedLogin;
 import cc.baka9.catseedlogin.bukkit.Config;
 import cc.baka9.catseedlogin.bukkit.database.Cache;
@@ -62,7 +63,7 @@ public class CommandRegister implements CommandExecutor {
                     lp.crypt();
                     CatSeedLogin.sql.add(lp);
                     LoginPlayerHelper.add(lp);
-                    Bukkit.getScheduler().runTask(CatSeedLogin.instance, () -> {
+                    CatScheduler.runTask(() -> {
                         CatSeedPlayerRegisterEvent event = new CatSeedPlayerRegisterEvent(Bukkit.getPlayer(sender.getName()));
                         Bukkit.getServer().getPluginManager().callEvent(event);
                     });

@@ -10,6 +10,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import cc.baka9.catseedlogin.bukkit.CatScheduler;
 import cc.baka9.catseedlogin.bukkit.CatSeedLogin;
 import cc.baka9.catseedlogin.bukkit.Communication;
 import cc.baka9.catseedlogin.bukkit.Config;
@@ -264,7 +265,7 @@ public class CommandCatSeedLogin implements CommandExecutor {
                         CatSeedLogin.sql.del(lp.getName());
                         LoginPlayerHelper.remove(lp);
                         sender.sendMessage("§e已删除账户 §a" + lp.getName());
-                        Bukkit.getScheduler().runTask(CatSeedLogin.instance, () -> {
+                        CatScheduler.runTask(() -> {
                             Player p = Bukkit.getPlayerExact(lp.getName());
                             if (p != null && p.isOnline()) {
                                 p.kickPlayer("§c你的账户已被删除!");
@@ -316,7 +317,7 @@ public class CommandCatSeedLogin implements CommandExecutor {
                         LoginPlayerHelper.remove(lp);
                         sender.sendMessage(String.join(" ", "§a玩家", lp.getName(), "密码已设置"));
                         LoginPlayer finalLp = lp;
-                        Bukkit.getScheduler().runTask(CatSeedLogin.instance, () -> {
+                        CatScheduler.runTask(() -> {
                             Player p = Bukkit.getPlayer(finalLp.getName());
                             if (p != null && p.isOnline()) {
                                 p.sendMessage("§c密码已被管理员重新设置,请重新登录");

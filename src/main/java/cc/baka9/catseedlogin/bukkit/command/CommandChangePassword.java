@@ -8,6 +8,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import cc.baka9.catseedlogin.bukkit.CatScheduler;
 import cc.baka9.catseedlogin.bukkit.CatSeedLogin;
 import cc.baka9.catseedlogin.bukkit.Config;
 import cc.baka9.catseedlogin.bukkit.database.Cache;
@@ -62,7 +63,7 @@ public class CommandChangePassword implements CommandExecutor {
                 CatSeedLogin.sql.edit(lp);
                 LoginPlayerHelper.remove(lp);
 
-                Bukkit.getScheduler().runTask(CatSeedLogin.instance, () -> {
+                CatScheduler.runTask(() -> {
                     Player player = Bukkit.getPlayer(((Player) sender).getUniqueId());
                     if (player != null && player.isOnline()) {
                         player.sendMessage(Config.Language.CHANGEPASSWORD_SUCCESS);

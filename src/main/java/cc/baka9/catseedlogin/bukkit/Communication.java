@@ -108,7 +108,7 @@ private static void handleRequest(Socket socket) throws IOException {
         // 对比玩家名，时间戳，和authKey加密的结果（加密是因为如果登录服不在内网环境下，则可能会被人使用这个功能给发包来直接绕过登录）
         if (CommunicationAuth.encryption(playerName, time, Config.BungeeCord.AuthKey).equals(sign)) {
             // 切换主线程给予登录状态
-            Bukkit.getScheduler().runTask(CatSeedLogin.instance, () -> {
+            CatScheduler.runTask( () -> {
                 LoginPlayer lp = Cache.getIgnoreCase(playerName);
                 if (lp != null) {
                     LoginPlayerHelper.add(lp);
@@ -124,7 +124,7 @@ private static void handleRequest(Socket socket) throws IOException {
 
     private static void handleConnectRequest(Socket socket, String playerName) {
         // 切换主线程获取是否已登录
-        Bukkit.getScheduler().runTask(CatSeedLogin.instance, () -> {
+        CatScheduler.runTask( () -> {
             boolean result = LoginPlayerHelper.isLogin(playerName);
 
             // 切换异步线程返回结果

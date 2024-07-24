@@ -7,7 +7,6 @@ import java.util.Collections;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitScheduler;
 
 import cc.baka9.catseedlogin.bukkit.command.CommandBindEmail;
 import cc.baka9.catseedlogin.bukkit.command.CommandCatSeedLogin;
@@ -25,13 +24,14 @@ import cc.baka9.catseedlogin.bukkit.task.Task;
 public class CatSeedLogin extends JavaPlugin {
 
     public static CatSeedLogin instance;
-    public static BukkitScheduler scheduler = Bukkit.getScheduler();
     public static SQL sql;
     public static boolean loadProtocolLib = false;
+    public static boolean folia = CatScheduler.folia;
 
     @Override
     public void onEnable(){
         instance = this;
+        if (folia) getLogger().warning("检测到Folia,注意目前版本对Folia的支持还不稳定！");
         //Config
         try {
             Config.load();
@@ -149,7 +149,7 @@ public class CatSeedLogin extends JavaPlugin {
     }
 
     public void runTaskAsync(Runnable runnable){
-        scheduler.runTaskAsynchronously(this, runnable);
+        CatScheduler.runTaskAsync(runnable);
     }
 
 

@@ -4,6 +4,7 @@ author: CatSeed
 version: ${version}
 softdepend: [Multiverse-Core, Citizens, Essentials, EssentialsSpawn, ProtocolLib, floodgate]
 api-version: 1.13
+folia-supported: true
 commands:
   login:
     description: 使用密码登录
