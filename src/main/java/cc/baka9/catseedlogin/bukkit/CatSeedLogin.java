@@ -20,6 +20,7 @@ import cc.baka9.catseedlogin.bukkit.database.SQL;
 import cc.baka9.catseedlogin.bukkit.database.SQLite;
 import cc.baka9.catseedlogin.bukkit.object.LoginPlayerHelper;
 import cc.baka9.catseedlogin.bukkit.task.Task;
+import cn.handyplus.lib.adapter.HandySchedulerUtil;
 import space.arim.morepaperlib.MorePaperLib;
 
 public class CatSeedLogin extends JavaPlugin {
@@ -33,6 +34,7 @@ public class CatSeedLogin extends JavaPlugin {
     public void onEnable(){
         instance = this;
         morePaperLib = new MorePaperLib(this);
+        HandySchedulerUtil.init(this);
         //Config
         try {
             Config.load();
