@@ -41,6 +41,4 @@ jobs:
       uses: softprops/action-gh-release@v2.0.8
       if: startsWith(github.ref, 'refs/tags/')
       with:
-        tag_name: ${{ github.ref_name }}
-        name: ${{ github.ref_name }}
         files: target/*.jar
