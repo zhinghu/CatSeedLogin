@@ -311,29 +311,53 @@ public class Config {
 
     }
     // 位置转成字符串
-    private static String loc2String(Location loc){
-        try {
-            return loc.getWorld().getName() + ":" + loc.getX() + ":" + loc.getY() + ":" + loc.getZ() + ":" + loc.getYaw() + ":" + loc.getPitch();
-        } catch (Exception ignored) {
-            loc = getDefaultWorld().getSpawnLocation();
-        }
-        return loc.getWorld().getName() + ":" + loc.getX() + ":" + loc.getY() + ":" + loc.getZ() + ":" + loc.getYaw() + ":" + loc.getPitch();
-
+    private static String loc2String(Location loc) {
+    try {
+        return String.format("%s:%.2f:%.2f:%.2f:%.2f:%.2f",
+                             loc.getWorld().getName(),
+                             loc.getX(),
+                             loc.getY(),
+                             loc.getZ(),
+                             loc.getYaw(),
+                             loc.getPitch());
+    } catch (Exception e) {
+        // 记录错误日志
+        e.printStackTrace();
+        // 使用默认世界的出生点位置
+        Location defaultLoc = getDefaultWorld().getSpawnLocation();
+        return String.format("%s:%.2f:%.2f:%.2f:%.2f:%.2f",
+                             defaultLoc.getWorld().getName(),
+                             defaultLoc.getX(),
+                             defaultLoc.getY(),
+                             defaultLoc.getZ(),
+                             defaultLoc.getYaw(),
+                             defaultLoc.getPitch());
     }
+}
+
 
     // 获取默认世界
-    private static World getDefaultWorld(){
-        try (InputStream is = new BufferedInputStream(Files.newInputStream(new File("server.properties").toPath()))) {
-            Properties properties = new Properties();
-            properties.load(is);
-            String worldName = properties.getProperty("level-name");
-            return Bukkit.getWorld(worldName);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private static World getDefaultWorld() {
+    File serverPropertiesFile = new File("server.properties");
+    if (!serverPropertiesFile.exists()) {
         return Bukkit.getWorlds().get(0);
     }
+
+    try (InputStream is = new BufferedInputStream(Files.newInputStream(serverPropertiesFile.toPath()))) {
+        Properties properties = new Properties();
+        properties.load(is);
+        String worldName = properties.getProperty("level-name");
+        World world = Bukkit.getWorld(worldName);
+        if (world != null) {
+            return world;
+        }
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+
+    return Bukkit.getWorlds().get(0);
+}
+
 
 
 }
