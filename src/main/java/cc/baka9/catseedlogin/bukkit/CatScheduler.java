@@ -9,25 +9,18 @@ import org.bukkit.entity.Player;
 import space.arim.morepaperlib.scheduling.ScheduledTask;
 
 public class CatScheduler {
-    // folia check
-    private static final boolean folia = isFolia();
-    private static final Method teleportAsync;
+    private static final boolean folia = CatSeedLogin.morePaperLib.scheduling().isUsingFolia();
+    private static final Method teleportAsync = initTeleportAsync();
 
-    static {
-        // init reflect for folia
-        Method tempTeleportAsync = null;
+    private static Method initTeleportAsync() {
         if (folia) {
             try {
-                tempTeleportAsync = Player.class.getMethod("teleportAsync", Location.class);
+                return Player.class.getMethod("teleportAsync", Location.class);
             } catch (NoSuchMethodException e) {
                 e.printStackTrace();
             }
         }
-        teleportAsync = tempTeleportAsync;
-    }
-
-    private static boolean isFolia() {
-        return CatSeedLogin.morePaperLib.scheduling().isUsingFolia();
+        return null;
     }
 
     public static void teleport(Player player, Location location) {
@@ -35,7 +28,6 @@ public class CatScheduler {
             player.teleport(location);
             return;
         }
-
         CatSeedLogin.morePaperLib.scheduling().entitySpecificScheduler(player).run(() -> {
             try {
                 teleportAsync.invoke(player, location);
