@@ -121,9 +121,10 @@ public static List<String> getStoredIPs(LoginPlayer lp) {
     List<String> storedIPs = new ArrayList<>();
 
     String ipsString = lp.getIps();
-    String[] ipsArray = ipsString.split(";");
-
-    storedIPs.addAll(Arrays.asList(ipsArray));
+    if (ipsString != null) {
+        String[] ipsArray = ipsString.split(";");
+        storedIPs.addAll(Arrays.asList(ipsArray));
+    }
 
     return storedIPs;
 }
