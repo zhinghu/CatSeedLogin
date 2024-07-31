@@ -116,13 +116,13 @@ public class Config {
             AfterLoginBack = config.getBoolean("AfterLoginBack", resourceConfig.getBoolean("AfterLoginBack"));
             CanTpSpawnLocation = config.getBoolean("CanTpSpawnLocation", resourceConfig.getBoolean("CanTpSpawnLocation"));
             List<String> commandWhiteList = config.getStringList("CommandWhiteList");
-            if (commandWhiteList.size() == 0) {
+            if (commandWhiteList.isEmpty()) {
                 commandWhiteList = resourceConfig.getStringList("CommandWhiteList");
             }
             Settings.CommandWhiteList.clear();
             Settings.CommandWhiteList.addAll(commandWhiteList.stream().map(Pattern::compile).collect(Collectors.toList()));
             AutoKick = config.getInt("AutoKick", 120);
-            IPTimeout = config.getInt("IPTimeout", 120);
+            IPTimeout = config.getInt("IPTimeout", 5);
             SpawnLocation = str2Location(config.getString("SpawnLocation"));
             DeathStateQuitRecordLocation = config.getBoolean("DeathStateQuitRecordLocation", resourceConfig.getBoolean("DeathStateQuitRecordLocation"));
             FloodgatePrefixProtect = config.getBoolean("FloodgatePrefixProtect", resourceConfig.getBoolean("FloodgatePrefixProtect"));
