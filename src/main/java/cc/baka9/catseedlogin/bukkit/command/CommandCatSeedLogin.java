@@ -220,7 +220,7 @@ public class CommandCatSeedLogin implements CommandExecutor {
         if (args.length > 0 && args[0].equalsIgnoreCase("LoginwiththesameIP")) {
             Config.Settings.LoginwiththesameIP = !Config.Settings.LoginwiththesameIP;
             Config.Settings.save();
-            sender.sendMessage("§e同一IP玩家登录跳过 " + (Config.Settings.LoginwiththesameIP ? "§a开启" : "§8关闭"));
+            sender.sendMessage("§e同IP玩家登录跳过 " + (Config.Settings.LoginwiththesameIP ? "§a开启" : "§8关闭"));
             return true;
         }
         return false;
