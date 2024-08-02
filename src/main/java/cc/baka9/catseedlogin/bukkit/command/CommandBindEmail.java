@@ -28,9 +28,6 @@ public class CommandBindEmail implements CommandExecutor {
         if (Config.Settings.BedrockLoginBypass && LoginPlayerHelper.isFloodgatePlayer(player)) {
             return true;
         }
-        if (Config.Settings.LoginwiththesameIP && LoginPlayerHelper.recordCurrentIP(player)) {
-            return true;
-        }
 
         LoginPlayer lp = Cache.getIgnoreCase(name);
         if (lp == null) {
