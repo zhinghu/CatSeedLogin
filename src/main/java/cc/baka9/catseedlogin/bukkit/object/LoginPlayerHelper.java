@@ -182,19 +182,15 @@ public static List<String> getStoredIPs(LoginPlayer lp) {
     ItemStack[] blankInventory = new ItemStack[inventorySize];
     Arrays.fill(blankInventory, new ItemStack(Material.AIR));
 
-    try {
-        StructureModifier<ItemStack[]> itemArrayModifier = inventoryPacket.getItemArrayModifier();
-        if (itemArrayModifier.size() > 0) {
-            itemArrayModifier.write(0, blankInventory);
-        } else {
-            StructureModifier<List<ItemStack>> itemListModifier = inventoryPacket.getItemListModifier();
-            itemListModifier.write(0, Arrays.asList(blankInventory));
-        }
-
-        protocolManager.sendServerPacket(player, inventoryPacket, false);
-    } catch (InvocationTargetException e) {
-        e.printStackTrace();
+    StructureModifier<ItemStack[]> itemArrayModifier = inventoryPacket.getItemArrayModifier();
+    if (itemArrayModifier.size() > 0) {
+        itemArrayModifier.write(0, blankInventory);
+    } else {
+        StructureModifier<List<ItemStack>> itemListModifier = inventoryPacket.getItemListModifier();
+        itemListModifier.write(0, Arrays.asList(blankInventory));
     }
+
+    protocolManager.sendServerPacket(player, inventoryPacket, false);
 }
 
 }
