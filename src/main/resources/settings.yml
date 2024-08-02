@@ -2,6 +2,8 @@ IpRegisterCountLimit: 2
 IpCountLimit: 2
 LimitChineseID: true
 BedrockLoginBypass: true
+LoginwiththesameIP: 0
+IPTimeout: 0
 MinLengthID: 2
 MaxLengthID: 15
 BeforeLoginNoDamage: true
@@ -17,3 +19,4 @@ CommandWhiteList:
 AutoKick: 120
 DeathStateQuitRecordLocation: true
 FloodgatePrefixProtect: true
+Emptybackpack: true

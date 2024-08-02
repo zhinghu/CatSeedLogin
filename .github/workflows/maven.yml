@@ -5,25 +5,27 @@ on:
   push:
     branches:
       - '*'  # 所有分支
+    tags:
+      - 'v*'
   pull_request:
     branches:
-      - '*'  # 所有分支
+      - '*'
+
+permissions:
+  contents: write
+  discussions: write
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        java-version: ['8', '11', '17', '21']
-
     steps:
     - uses: actions/checkout@v4
-    - name: Set up JDK ${{ matrix.java-version }}
+    - name: Set up JDK 8
       uses: actions/setup-java@v4
       with:
-        java-version: ${{ matrix.java-version }}
+        java-version: 8
         distribution: 'temurin'
         cache: maven
     - name: Build with Maven
@@ -32,5 +34,11 @@ jobs:
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: CatSeedLogin-${{ matrix.java-version }}
-        path: target/*.jar
+        name: CatSeedLogin
+        path: target/CatSeedLogin*.jar
+
+    - name: Create Release and Upload Release Asset
+      uses: softprops/action-gh-release@v2.0.8
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: target/CatSeedLogin*.jar

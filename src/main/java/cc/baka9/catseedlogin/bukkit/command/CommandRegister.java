@@ -1,5 +1,14 @@
 package cc.baka9.catseedlogin.bukkit.command;
 
+import java.util.List;
+
+import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import cc.baka9.catseedlogin.bukkit.CatScheduler;
 import cc.baka9.catseedlogin.bukkit.CatSeedLogin;
 import cc.baka9.catseedlogin.bukkit.Config;
 import cc.baka9.catseedlogin.bukkit.database.Cache;
@@ -7,13 +16,6 @@ import cc.baka9.catseedlogin.bukkit.event.CatSeedPlayerRegisterEvent;
 import cc.baka9.catseedlogin.bukkit.object.LoginPlayer;
 import cc.baka9.catseedlogin.bukkit.object.LoginPlayerHelper;
 import cc.baka9.catseedlogin.util.Util;
-import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
-import java.util.List;
 
 public class CommandRegister implements CommandExecutor {
 
@@ -23,6 +25,9 @@ public class CommandRegister implements CommandExecutor {
         Player player = (Player) sender;
         String name = sender.getName();
         if (Config.Settings.BedrockLoginBypass && LoginPlayerHelper.isFloodgatePlayer(player)){
+            return true;
+        }
+        if (Config.Settings.LoginwiththesameIP && LoginPlayerHelper.recordCurrentIP(player)){
             return true;
         }
         if (LoginPlayerHelper.isLogin(name)) {
@@ -58,12 +63,12 @@ public class CommandRegister implements CommandExecutor {
                     lp.crypt();
                     CatSeedLogin.sql.add(lp);
                     LoginPlayerHelper.add(lp);
-                    Bukkit.getScheduler().runTask(CatSeedLogin.instance, () -> {
+                    CatScheduler.runTask(() -> {
                         CatSeedPlayerRegisterEvent event = new CatSeedPlayerRegisterEvent(Bukkit.getPlayer(sender.getName()));
                         Bukkit.getServer().getPluginManager().callEvent(event);
                     });
                     sender.sendMessage(Config.Language.REGISTER_SUCCESS);
-                    player.updateInventory();
+                    CatScheduler.updateInventory(player);
                     LoginPlayerHelper.recordCurrentIP(player, lp);
                 }
 

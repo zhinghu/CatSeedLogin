@@ -1,16 +1,20 @@
 package cc.baka9.catseedlogin.bungee;
 
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.Connection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.event.*;
+import net.md_5.bungee.api.event.ChatEvent;
+import net.md_5.bungee.api.event.PlayerDisconnectEvent;
+import net.md_5.bungee.api.event.PreLoginEvent;
+import net.md_5.bungee.api.event.ServerConnectEvent;
+import net.md_5.bungee.api.event.ServerConnectedEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
-
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.List;
 
 /**
  * Bungee Cord 监听事件类
@@ -97,12 +101,19 @@ public class Listeners implements Listener {
     /**
      * 玩家在登录前，检查bc端和子服务器的登录状态，如果任一已登录，阻止连接
      */
-    @EventHandler
+        @EventHandler
     public void onPreLogin(PreLoginEvent event) {
         String playerName = event.getConnection().getName();
-        if (loggedInPlayerList.contains(playerName) || Communication.sendConnectRequest(playerName) == 1) {
-            event.setCancelReason(new TextComponent(""));
+        try {
+            if (loggedInPlayerList.contains(playerName) || Communication.sendConnectRequest(playerName) == 1) {
+                event.setCancelReason(new TextComponent("您已经登录，请勿重复登录。"));
+                event.setCancelled(true);
+            }
+        } catch (Exception e) {
+            event.setCancelReason(new TextComponent("发生错误，请稍后再试。"));
             event.setCancelled(true);
+            e.printStackTrace();
         }
     }
+
 }
