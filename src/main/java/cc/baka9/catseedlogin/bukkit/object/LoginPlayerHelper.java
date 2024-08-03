@@ -27,6 +27,8 @@ import cc.baka9.catseedlogin.bukkit.database.Cache;
 
 public class LoginPlayerHelper {
     private static final Set<LoginPlayer> set = new HashSet<>();
+    private Map<String, Long> playerExitTimes = new HashMap<>();
+    private long timeoutDuration;
 
     public static List<LoginPlayer> getList(){
         return new ArrayList<>(set);
@@ -97,6 +99,7 @@ public static boolean recordCurrentIP(Player player) {
 
     long currentTime = System.currentTimeMillis();
     LoginPlayer loginPlayer = Cache.getIgnoreCase(playerName);
+    LoginPlayerHelper helper = new LoginPlayerHelper();
 
     if (loginPlayer != null) {
         List<String> storedIPs = getStoredIPs(loginPlayer);
@@ -107,7 +110,7 @@ public static boolean recordCurrentIP(Player player) {
             if (Config.Settings.IPTimeout == 0) {
                 return storedIPs.contains(currentIP);
             } else {
-                if (storedIPs.contains(currentIP) && (currentTime - lastLoginTime) <= timeoutInMilliseconds) {
+                if (storedIPs.contains(currentIP) && helper.onPlayerJoin(playerName)) {
                     return true;
                 }
             }
@@ -122,11 +125,11 @@ public static boolean recordCurrentIP(Player player) {
 
 
 
-public class PlayerTimeoutManager {
-    private Map<String, Long> playerExitTimes = new HashMap<>();
-    private long timeoutDuration;
 
-    public PlayerTimeoutManager() {
+
+
+
+    public void PlayerTimeoutManager() {
         // 从配置文件中读取超时时间设置
         timeoutDuration = Config.Settings.IPTimeout * 60 * 1000;
     }
@@ -155,7 +158,7 @@ public class PlayerTimeoutManager {
             return false;
         }
     }
-}
+
 
 
 
