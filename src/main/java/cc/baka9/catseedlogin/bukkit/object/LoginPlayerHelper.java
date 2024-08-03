@@ -2,8 +2,10 @@ package cc.baka9.catseedlogin.bukkit.object;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -114,6 +116,61 @@ public static boolean recordCurrentIP(Player player) {
 
     return false;
 }
+
+
+
+
+
+
+public class PlayerTimeoutManager {
+    private Map<String, Long> playerExitTimes = new HashMap<>();
+    private long timeoutDuration;
+
+    public PlayerTimeoutManager() {
+        // 从配置文件中读取超时时间设置
+        timeoutDuration = Config.Settings.IPTimeout * 60 * 1000;
+    }
+
+    public void onPlayerQuit(String playerName) {
+        // 记录玩家退出时间
+        playerExitTimes.put(playerName, System.currentTimeMillis());
+    }
+
+    public boolean onPlayerJoin(String playerName) {
+        long currentTime = System.currentTimeMillis();
+        Long exitTime = playerExitTimes.get(playerName);
+
+        if (exitTime != null) {
+            // 检查是否超时
+            if (currentTime - exitTime > timeoutDuration) {
+                // 超时，返回false
+                return false;
+            } else {
+                // 未超时，返回true并清除记录
+                playerExitTimes.remove(playerName);
+                return true;
+            }
+        } else {
+            // 没有退出时间记录，可能是新玩家，返回false
+            return false;
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 public static List<String> getStoredIPs(LoginPlayer lp) {
