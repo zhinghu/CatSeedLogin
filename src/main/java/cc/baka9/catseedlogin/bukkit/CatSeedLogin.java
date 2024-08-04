@@ -6,6 +6,9 @@ import java.util.Collections;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import cc.baka9.catseedlogin.bukkit.command.CommandBindEmail;
@@ -23,18 +26,21 @@ import cc.baka9.catseedlogin.bukkit.task.Task;
 import cn.handyplus.lib.adapter.HandySchedulerUtil;
 import space.arim.morepaperlib.MorePaperLib;
 
-public class CatSeedLogin extends JavaPlugin {
+public class CatSeedLogin extends JavaPlugin implements Listener {
 
     public static CatSeedLogin instance;
     public static SQL sql;
     public static boolean loadProtocolLib = false;
     public static MorePaperLib morePaperLib;
+    private LoginPlayerHelper timeoutManager;
 
     @Override
     public void onEnable(){
         instance = this;
         morePaperLib = new MorePaperLib(this);
         HandySchedulerUtil.init(this);
+        getServer().getPluginManager().registerEvents(this, this);
+        timeoutManager = new LoginPlayerHelper();
         //Config
         try {
             Config.load();
@@ -130,6 +136,11 @@ public class CatSeedLogin extends JavaPlugin {
 
     }
 
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        // 当玩家退出时调用
+        timeoutManager.onPlayerQuit(event.getPlayer().getName());
+    }
 
     @Override
     public void onDisable(){
