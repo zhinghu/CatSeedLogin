@@ -9,11 +9,11 @@ import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -35,7 +35,7 @@ import org.bukkit.entity.Player;
  */
 public class Config {
     private static CatSeedLogin plugin = CatSeedLogin.instance;
-    private static Map<String, String> offlineLocations = new HashMap<>();
+    private static Map<String, String> offlineLocations = new ConcurrentHashMap<>();
 
     /**
      * 数据库

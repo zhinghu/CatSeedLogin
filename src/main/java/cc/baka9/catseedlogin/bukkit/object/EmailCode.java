@@ -1,12 +1,12 @@
 package cc.baka9.catseedlogin.bukkit.object;
 
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+
 import cc.baka9.catseedlogin.util.Util;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
 @Getter
 @Setter
@@ -16,9 +16,9 @@ public class EmailCode {
         Bind, ResetPassword
     }
 
-    private static Map<String, EmailCode> bindMap = new HashMap<>(10);
+    private static Map<String, EmailCode> bindMap = new ConcurrentHashMap<>(10);
 
-    private static Map<String, EmailCode> resetPasswordMap = new HashMap<>(10);
+    private static Map<String, EmailCode> resetPasswordMap = new ConcurrentHashMap<>(10);
 
     private String name;
     private String email;

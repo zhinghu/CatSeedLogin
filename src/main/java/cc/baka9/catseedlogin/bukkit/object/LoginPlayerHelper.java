@@ -2,11 +2,11 @@ package cc.baka9.catseedlogin.bukkit.object;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
@@ -27,7 +27,7 @@ import cc.baka9.catseedlogin.bukkit.database.Cache;
 
 public class LoginPlayerHelper {
     private static final Set<LoginPlayer> set = new HashSet<>();
-    private Map<String, Long> playerExitTimes = new HashMap<>();
+    private Map<String, Long> playerExitTimes = new ConcurrentHashMap<>();
     private long timeoutDuration;
 
     public static List<LoginPlayer> getList(){
@@ -144,6 +144,7 @@ public static boolean recordCurrentIP(Player player) {
     public boolean onPlayerJoin(String playerName) {
         long currentTime = System.currentTimeMillis();
         Long exitTime = playerExitTimes.get(playerName);
+        System.out.println("玩家 " + playerName + " 退出，时间: " + exitTime);
 
         if (exitTime != null) {
             // 检查是否超时
