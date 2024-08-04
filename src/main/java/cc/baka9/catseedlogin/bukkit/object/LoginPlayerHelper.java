@@ -136,7 +136,9 @@ public static boolean recordCurrentIP(Player player) {
 
     public void onPlayerQuit(String playerName) {
         // 记录玩家退出时间
-        playerExitTimes.put(playerName, System.currentTimeMillis());
+        long exitTime = System.currentTimeMillis();
+        playerExitTimes.put(playerName, exitTime);
+        System.out.println("玩家 " + playerName + " 退出，时间: " + exitTime);
     }
 
     public boolean onPlayerJoin(String playerName) {
