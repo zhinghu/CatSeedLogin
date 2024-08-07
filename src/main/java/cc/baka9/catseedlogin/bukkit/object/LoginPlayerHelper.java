@@ -149,7 +149,7 @@ public static boolean recordCurrentIP(Player player) {
         System.out.println("玩家 " + playerName + " 退出时间: " + exitTime);
         System.out.println("当前退出时间记录: " + playerExitTimes);
 
-        return exitTime != null && currentTime - exitTime <= timeoutDuration ? playerExitTimes.remove(playerName) : false;
+        return (boolean) (exitTime != null && currentTime - exitTime <= timeoutDuration ? playerExitTimes.remove(playerName) : false);
     }
 
 
