@@ -139,27 +139,17 @@ public static boolean recordCurrentIP(Player player) {
         long exitTime = System.currentTimeMillis();
         playerExitTimes.put(playerName, exitTime);
         System.out.println("玩家 " + playerName + " 退出，时间: " + exitTime);
+        System.out.println("当前退出时间记录: " + playerExitTimes);
     }
 
     public boolean onPlayerJoin(String playerName) {
         long currentTime = System.currentTimeMillis();
         Long exitTime = playerExitTimes.get(playerName);
-        System.out.println("玩家 " + playerName + " 退出，时间: " + exitTime);
+        System.out.println("玩家 " + playerName + " 加入，时间: " + currentTime);
+        System.out.println("玩家 " + playerName + " 退出时间: " + exitTime);
+        System.out.println("当前退出时间记录: " + playerExitTimes);
 
-        if (exitTime != null) {
-            // 检查是否超时
-            if (currentTime - exitTime > timeoutDuration) {
-                // 超时，返回false
-                return false;
-            } else {
-                // 未超时，返回true并清除记录
-                playerExitTimes.remove(playerName);
-                return true;
-            }
-        } else {
-            // 没有退出时间记录，可能是新玩家，返回false
-            return false;
-        }
+        return exitTime != null && currentTime - exitTime <= timeoutDuration ? playerExitTimes.remove(playerName) : false;
     }
 
 
