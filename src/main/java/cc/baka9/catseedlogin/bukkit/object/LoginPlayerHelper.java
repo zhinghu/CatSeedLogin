@@ -27,7 +27,7 @@ import cc.baka9.catseedlogin.bukkit.database.Cache;
 
 public class LoginPlayerHelper {
     private static final Set<LoginPlayer> set = new HashSet<>();
-    private Map<String, Long> playerExitTimes = new ConcurrentHashMap<>();
+    private static Map<String, Long> playerExitTimes = new ConcurrentHashMap<>();
     private long timeoutDuration;
 
     public static List<LoginPlayer> getList(){
