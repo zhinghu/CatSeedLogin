@@ -105,12 +105,14 @@ public static boolean recordCurrentIP(Player player) {
         List<String> storedIPs = getStoredIPs(loginPlayer);
         if (storedIPs != null) {
             long lastLoginTime = loginPlayer.getLastAction();
+            Long exitTime = playerExitTimes.get(playerName);
             long timeoutInMilliseconds = Config.Settings.IPTimeout * 60 * 1000;
 
             if (Config.Settings.IPTimeout == 0) {
                 return storedIPs.contains(currentIP);
             } else {
-                if (storedIPs.contains(currentIP) && helper.onPlayerJoin(playerName)) {
+                if (exitTime != null)
+                if (storedIPs.contains(currentIP) && (currentTime - exitTime) <= timeoutInMilliseconds) {
                     return true;
                 }
             }
@@ -142,15 +144,6 @@ public static boolean recordCurrentIP(Player player) {
         System.out.println("当前退出时间记录: " + playerExitTimes);
     }
 
-    public boolean onPlayerJoin(String playerName) {
-        long currentTime = System.currentTimeMillis();
-        Long exitTime = playerExitTimes.get(playerName);
-        // System.out.println("玩家 " + playerName + " 加入，时间: " + currentTime);
-        // System.out.println("玩家 " + playerName + " 退出时间: " + exitTime);
-        System.out.println("当前退出时间记录: " + playerExitTimes);
-
-        return (boolean) (exitTime != null && currentTime - exitTime <= timeoutDuration ? playerExitTimes.remove(playerName) : false);
-    }
 
 
 

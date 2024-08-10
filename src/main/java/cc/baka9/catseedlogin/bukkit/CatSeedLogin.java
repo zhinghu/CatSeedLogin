@@ -8,7 +8,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -143,11 +142,6 @@ public class CatSeedLogin extends JavaPlugin implements Listener {
         timeoutManager.onPlayerQuit(event.getPlayer().getName());
     }
 
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        // 当玩家加入时调用
-        timeoutManager.onPlayerJoin(event.getPlayer().getName());
-    }
 
     @Override
     public void onDisable(){
