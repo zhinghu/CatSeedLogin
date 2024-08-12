@@ -115,7 +115,7 @@ public static boolean recordCurrentIP(Player player) {
                     if (storedIPs.contains(currentIP) && (currentTime - exitTime) <= timeoutInMilliseconds) {
                         return true;
                     }
-                    while (isLogin(playerName)) {
+                    if (isLogin(playerName)) {
                         playerExitTimes.remove(playerName);
                     }
                 }
