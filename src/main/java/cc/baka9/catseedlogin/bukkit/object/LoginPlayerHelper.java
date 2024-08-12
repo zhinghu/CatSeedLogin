@@ -111,9 +111,13 @@ public static boolean recordCurrentIP(Player player) {
             if (Config.Settings.IPTimeout == 0) {
                 return storedIPs.contains(currentIP);
             } else {
-                if (exitTime != null)
-                if (storedIPs.contains(currentIP) && (currentTime - exitTime) <= timeoutInMilliseconds) {
-                    return true;
+                if (exitTime != null) {
+                    if (storedIPs.contains(currentIP) && (currentTime - exitTime) <= timeoutInMilliseconds) {
+                        return true;
+                    }
+                    while (isLogin(playerName)) {
+                        playerExitTimes.remove(playerName);
+                    }
                 }
             }
         }
