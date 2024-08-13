@@ -98,23 +98,21 @@ public static boolean recordCurrentIP(Player player) {
     }
 
     long currentTime = System.currentTimeMillis();
-    LoginPlayer loginPlayer = Cache.getIgnoreCase(playerName);
+    LoginPlayer storedPlayer = Cache.getIgnoreCase(playerName);
     LoginPlayerHelper helper = new LoginPlayerHelper();
 
-    if (loginPlayer != null) {
-        List<String> storedIPs = getStoredIPs(loginPlayer);
+    if (storedPlayer != null) {
+        List<String> storedIPs = getStoredIPs(storedPlayer);
         if (storedIPs != null) {
-            long lastLoginTime = loginPlayer.getLastAction();
+            long lastLoginTime = storedPlayer.getLastAction();
             Long exitTime = playerExitTimes.get(playerName);
             long timeoutInMilliseconds = Config.Settings.IPTimeout * 60 * 1000;
 
             if (Config.Settings.IPTimeout == 0) {
                 return storedIPs.contains(currentIP);
             } else {
-                if (exitTime != null) {
-                    if (storedIPs.contains(currentIP) && (currentTime - exitTime) <= timeoutInMilliseconds) {
-                        return true;
-                    }
+                if (exitTime != null && storedIPs.contains(currentIP) && (currentTime - exitTime) <= timeoutInMilliseconds) {
+                    return true;
                 }
             }
         }
