@@ -115,9 +115,6 @@ public static boolean recordCurrentIP(Player player) {
                     if (storedIPs.contains(currentIP) && (currentTime - exitTime) <= timeoutInMilliseconds) {
                         return true;
                     }
-                    if (isLogin(playerName)) {
-                        playerExitTimes.remove(playerName);
-                    }
                 }
             }
         }
@@ -127,7 +124,9 @@ public static boolean recordCurrentIP(Player player) {
 }
 
 
-
+public void a(String playerName) {
+    playerExitTimes.remove(playerName);
+}
 
 
 
