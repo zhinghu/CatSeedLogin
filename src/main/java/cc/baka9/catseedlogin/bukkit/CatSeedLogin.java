@@ -150,11 +150,9 @@ public class CatSeedLogin extends JavaPlugin implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                // 这里放置你想要循环执行的代码
-                // 例如：记录玩家退出时间
                 timeoutManager.recordPlayerExitTime(event.getPlayer().getName());
             }
-        }.runTaskTimer(this, 0L, 20L); // 0L 是初始延迟，20L 是每隔20个tick执行一次
+        }.runTaskTimer(this, 0L, 20L);
     }
 
 
