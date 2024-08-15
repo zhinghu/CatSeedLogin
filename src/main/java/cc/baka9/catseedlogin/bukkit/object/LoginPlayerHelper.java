@@ -135,16 +135,14 @@ public void recordPlayerExitTime(String playerName) {
 
 
     public void PlayerTimeoutManager() {
-        // 从配置文件中读取超时时间设置
         timeoutDuration = Config.Settings.IPTimeout * 60 * 1000;
     }
 
     public void onPlayerQuit(String playerName) {
-        // 记录玩家退出时间
         long exitTime = System.currentTimeMillis();
+        if (isLogin(playerName)) {
         playerExitTimes.put(playerName, exitTime);
-        // System.out.println("玩家 " + playerName + " 退出，时间: " + exitTime);
-        System.out.println("当前退出时间记录: " + playerExitTimes);
+    }
     }
 
 
