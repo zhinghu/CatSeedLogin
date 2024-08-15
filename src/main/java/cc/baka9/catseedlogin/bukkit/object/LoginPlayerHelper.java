@@ -122,8 +122,10 @@ public static boolean recordCurrentIP(Player player) {
 }
 
 
-public void a(String playerName) {
-    playerExitTimes.remove(playerName);
+public void recordPlayerExitTime(String playerName) {
+    if (isLogin(playerName)) {
+        playerExitTimes.put(playerName, System.currentTimeMillis());
+    }
 }
 
 
