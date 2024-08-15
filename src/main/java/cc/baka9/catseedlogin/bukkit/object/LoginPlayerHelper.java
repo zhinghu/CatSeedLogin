@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
@@ -25,6 +27,8 @@ import cc.baka9.catseedlogin.bukkit.database.Cache;
 
 public class LoginPlayerHelper {
     private static final Set<LoginPlayer> set = new HashSet<>();
+    private static Map<String, Long> playerExitTimes = new ConcurrentHashMap<>();
+    private long timeoutDuration;
 
     public static List<LoginPlayer> getList(){
         return new ArrayList<>(set);
@@ -94,18 +98,20 @@ public static boolean recordCurrentIP(Player player) {
     }
 
     long currentTime = System.currentTimeMillis();
-    LoginPlayer loginPlayer = Cache.getIgnoreCase(playerName);
+    LoginPlayer storedPlayer = Cache.getIgnoreCase(playerName);
+    LoginPlayerHelper helper = new LoginPlayerHelper();
 
-    if (loginPlayer != null) {
-        List<String> storedIPs = getStoredIPs(loginPlayer);
+    if (storedPlayer != null) {
+        List<String> storedIPs = getStoredIPs(storedPlayer);
         if (storedIPs != null) {
-            long lastLoginTime = loginPlayer.getLastAction();
+            long lastLoginTime = storedPlayer.getLastAction();
+            Long exitTime = playerExitTimes.get(playerName);
             long timeoutInMilliseconds = Config.Settings.IPTimeout * 60 * 1000;
 
             if (Config.Settings.IPTimeout == 0) {
                 return storedIPs.contains(currentIP);
             } else {
-                if (storedIPs.contains(currentIP) && (currentTime - lastLoginTime) <= timeoutInMilliseconds) {
+                if (exitTime != null && storedIPs.contains(currentIP) && (currentTime - exitTime) <= timeoutInMilliseconds) {
                     return true;
                 }
             }
@@ -114,6 +120,47 @@ public static boolean recordCurrentIP(Player player) {
 
     return false;
 }
+
+
+public void recordPlayerExitTime(String playerName) {
+    if (isLogin(playerName)) {
+        playerExitTimes.put(playerName, System.currentTimeMillis());
+    }
+}
+
+
+
+
+
+
+
+    public void PlayerTimeoutManager() {
+        timeoutDuration = Config.Settings.IPTimeout * 60 * 1000;
+    }
+
+    public void onPlayerQuit(String playerName) {
+        long exitTime = System.currentTimeMillis();
+        if (isLogin(playerName)) {
+        playerExitTimes.put(playerName, exitTime);
+    }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 public static List<String> getStoredIPs(LoginPlayer lp) {
