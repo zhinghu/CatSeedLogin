@@ -140,7 +140,7 @@ public void recordPlayerExitTime(String playerName) {
 
     public void onPlayerQuit(String playerName) {
         long exitTime = System.currentTimeMillis();
-        if (isLogin(playerName)) {
+        if (Config.Settings.IPTimeout != 0 && isLogin(playerName)) {
         playerExitTimes.put(playerName, exitTime);
     }
     }
