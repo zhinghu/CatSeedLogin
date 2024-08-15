@@ -11,6 +11,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import cc.baka9.catseedlogin.bukkit.command.CommandBindEmail;
 import cc.baka9.catseedlogin.bukkit.command.CommandCatSeedLogin;
@@ -145,10 +146,15 @@ public class CatSeedLogin extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        Bukkit.getScheduler().runTaskLater(this, () -> {
-            timeoutManager.recordPlayerExitTime(event.getPlayer().getName());
-
-        }, 20L);
+        // 创建一个新的BukkitRunnable任务
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                // 这里放置你想要循环执行的代码
+                // 例如：记录玩家退出时间
+                timeoutManager.recordPlayerExitTime(event.getPlayer().getName());
+            }
+        }.runTaskTimer(this, 0L, 20L); // 0L 是初始延迟，20L 是每隔20个tick执行一次
     }
 
 
