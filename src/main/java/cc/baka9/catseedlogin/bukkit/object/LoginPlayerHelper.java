@@ -123,7 +123,7 @@ public static boolean recordCurrentIP(Player player) {
 
 
 public void recordPlayerExitTime(String playerName) {
-    if (isLogin(playerName)) {
+    if (Config.Settings.IPTimeout != 0 && isLogin(playerName)) {
         playerExitTimes.put(playerName, System.currentTimeMillis());
     }
 }
