@@ -97,7 +97,6 @@ public static boolean recordCurrentIP(Player player) {
         return false;
     }
 
-    long currentTime = System.currentTimeMillis();
     LoginPlayer storedPlayer = Cache.getIgnoreCase(playerName);
     LoginPlayerHelper helper = new LoginPlayerHelper();
 
@@ -111,7 +110,7 @@ public static boolean recordCurrentIP(Player player) {
             if (Config.Settings.IPTimeout == 0) {
                 return storedIPs.contains(currentIP);
             } else {
-                if (exitTime != null && storedIPs.contains(currentIP) && (currentTime - exitTime) <= timeoutInMilliseconds) {
+                if (exitTime != null && storedIPs.contains(currentIP) && (System.currentTimeMillis() - exitTime) <= timeoutInMilliseconds) {
                     return true;
                 }
             }
@@ -139,9 +138,8 @@ public void recordPlayerExitTime(String playerName) {
     }
 
     public void onPlayerQuit(String playerName) {
-        long exitTime = System.currentTimeMillis();
         if (Config.Settings.IPTimeout != 0 && isLogin(playerName)) {
-        playerExitTimes.put(playerName, exitTime);
+        playerExitTimes.put(playerName, System.currentTimeMillis());
     }
     }
 
