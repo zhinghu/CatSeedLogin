@@ -146,7 +146,6 @@ public class CatSeedLogin extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        // 创建一个新的BukkitRunnable任务
         new BukkitRunnable() {
             @Override
             public void run() {
