@@ -139,7 +139,6 @@ public class CatSeedLogin extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        // 当玩家退出时调用
         timeoutManager.onPlayerQuit(event.getPlayer().getName());
     }
 

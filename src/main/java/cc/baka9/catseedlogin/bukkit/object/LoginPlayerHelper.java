@@ -28,7 +28,6 @@ import cc.baka9.catseedlogin.bukkit.database.Cache;
 public class LoginPlayerHelper {
     private static final Set<LoginPlayer> set = new HashSet<>();
     private static Map<String, Long> playerExitTimes = new ConcurrentHashMap<>();
-    private long timeoutDuration;
 
     public static List<LoginPlayer> getList(){
         return new ArrayList<>(set);
@@ -98,12 +97,10 @@ public static boolean recordCurrentIP(Player player) {
     }
 
     LoginPlayer storedPlayer = Cache.getIgnoreCase(playerName);
-    LoginPlayerHelper helper = new LoginPlayerHelper();
 
     if (storedPlayer != null) {
         List<String> storedIPs = getStoredIPs(storedPlayer);
         if (storedIPs != null) {
-            long lastLoginTime = storedPlayer.getLastAction();
             Long exitTime = playerExitTimes.get(playerName);
             long timeoutInMilliseconds = Config.Settings.IPTimeout * 60 * 1000;
 
@@ -133,9 +130,6 @@ public void recordPlayerExitTime(String playerName) {
 
 
 
-    public void PlayerTimeoutManager() {
-        timeoutDuration = Config.Settings.IPTimeout * 60 * 1000;
-    }
 
     public void onPlayerQuit(String playerName) {
         if (Config.Settings.IPTimeout != 0 && isLogin(playerName)) {
