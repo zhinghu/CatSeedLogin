@@ -17,8 +17,11 @@ public class Mail {
         email.setHostName(Config.EmailVerify.EmailSmtpHost);
         email.setSmtpPort(Integer.parseInt(Config.EmailVerify.EmailSmtpPort));
         email.setAuthenticator(new DefaultAuthenticator(Config.EmailVerify.EmailAccount, Config.EmailVerify.EmailPassword));
-        email.setSSLOnConnect(Config.EmailVerify.SSLAuthVerify);
-        email.setStartTLSEnabled(Config.EmailVerify.SSLAuthVerify);
+        if (Config.EmailVerify.SSLAuthVerify) {
+            email.setSSLOnConnect(true);
+        } else {
+            email.setStartTLSEnabled(true);
+        }
         email.setFrom(Config.EmailVerify.EmailAccount, Config.EmailVerify.FromPersonal);
         email.setSubject(subject);
         email.setMsg(content);
