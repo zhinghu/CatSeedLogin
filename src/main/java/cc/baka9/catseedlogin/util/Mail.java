@@ -26,6 +26,7 @@ public class Mail {
         email.setSubject(subject);
         email.setMsg(content);
         email.addTo(receiveMailAccount);
+        ((HtmlEmail) email).setCharset("GBK");
         email.send();
 
     }
