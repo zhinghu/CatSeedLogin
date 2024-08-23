@@ -17,7 +17,7 @@ public class CatScheduler {
             try {
                 return Player.class.getMethod("teleportAsync", Location.class);
             } catch (NoSuchMethodException e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
         }
         return null;

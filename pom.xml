@@ -6,7 +6,7 @@
 
     <groupId>cc.baka9</groupId>
     <artifactId>CatSeedLogin</artifactId>
-    <version>1.4.4-SNAPSHOT</version>
+    <version>1.4.5-SNAPSHOT</version>
 
     <name>CatSeedLogin</name>
     <url>https://www.mcbbs.net/thread-847859-1-1.html</url>
@@ -92,6 +92,11 @@
      <artifactId>FoliaLib</artifactId>
      <version>1.1.5</version>
  </dependency>
+ <dependency>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-email</artifactId>
+    <version>1.5</version> <!-- 请使用最新的版本号 -->
+</dependency>
     </dependencies>
     <repositories>
         <!-- Spigot -->
