@@ -11,7 +11,7 @@ public class CommunicationAuth {
         try {
             messageDigest = MessageDigest.getInstance("SHA-256");
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("SHA-256 algorithm not found", e);
+            throw new RuntimeException(e);
         }
     }
 
