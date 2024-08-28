@@ -14,7 +14,6 @@ public class BufferStatement {
         this.query = query;
         this.values = values;
         this.stacktrace = new Exception();
-        this.stacktrace.fillInStackTrace();
     }
 
     public PreparedStatement prepareStatement(Connection con) throws SQLException {
