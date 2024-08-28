@@ -196,7 +196,7 @@ public class Listeners implements Listener {
         }
         if (Config.Settings.FloodgatePrefixProtect && Bukkit.getPluginManager().getPlugin("floodgate") != null) {
             String prefix = FloodgateApi.getInstance().getPlayerPrefix();
-            if (name.startsWith(prefix) && !FloodgateApi.getInstance().isFloodgatePlayer(event.getUniqueId())) {
+            if (name.toLowerCase().startsWith(prefix.toLowerCase()) && !FloodgateApi.getInstance().isFloodgatePlayer(event.getUniqueId())) {
                 event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, "非法的基岩版玩家名称,请非基岩版玩家的名称不要以" + prefix + "开头");
                 return;
             }
