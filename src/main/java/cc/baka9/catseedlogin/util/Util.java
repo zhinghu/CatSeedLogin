@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.Random;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.RandomStringUtils;
+
 public class Util {
     private static final Pattern passwordDifficultyRegex = Pattern.compile("^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}$");
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -26,15 +28,7 @@ public class Util {
     }
 
     public static String randomStr() {
-        int leftLimit = 97; // letter 'a'
-        int rightLimit = 122; // letter 'z'
-        int targetStringLength = 10;
-        StringBuilder buffer = new StringBuilder(targetStringLength);
-        for (int i = 0; i < targetStringLength; i++) {
-            int randomLimitedInt = leftLimit + random.nextInt(rightLimit - leftLimit + 1);
-            buffer.append((char) randomLimitedInt);
-        }
-        return buffer.toString();
+        return RandomStringUtils.randomAlphanumeric(10);
     }
 
     public static boolean isOSLinux() {
