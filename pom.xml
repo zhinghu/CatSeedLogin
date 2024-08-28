@@ -95,7 +95,12 @@
  <dependency>
     <groupId>org.apache.commons</groupId>
     <artifactId>commons-email</artifactId>
-    <version>1.5</version> <!-- 请使用最新的版本号 -->
+    <version>1.5</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-lang3</artifactId>
+    <version>3.12.0</version>
 </dependency>
     </dependencies>
     <repositories>
