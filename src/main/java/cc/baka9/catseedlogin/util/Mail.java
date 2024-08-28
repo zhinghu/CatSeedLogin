@@ -26,8 +26,7 @@ public class Mail {
         email.setSubject(subject);
         email.setMsg(content);
         email.addTo(receiveMailAccount);
-        ((HtmlEmail) email).setCharset("UTF-8");
-        ((HtmlEmail) email).setCharset("GBK");
+        email.setCharset("UTF-8");
         email.send();
 
     }
