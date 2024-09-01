@@ -114,15 +114,25 @@ AfterLoginBack: true
 CanTpSpawnLocation: true
 #登陆之前允许执行的指令 (支持正则表达式)
 CommandWhiteList:
-  - /(?i)l(ogin)?(\z| .\*)
-  - /(?i)reg(ister)?(\z| .\*)
-  - /(?i)resetpassword?(\z| .\*)
-  - /(?i)repw?(\z| .\*)
+  - /(?i)l(ogin)?(\z| .*)
+  - /(?i)reg(ister)?(\z| .*)
+  - /(?i)resetpassword?(\z| .*)
+  - /(?i)repw?(\z| .*)
   - /(?i)worldedit cui
 #设置自动踢出未登录的玩家 (默认120秒，小于1秒则关闭此功能)
 AutoKick: 120
 #死亡状态退出游戏是否记录退出位置
 DeathStateQuitRecordLocation: true
+#基岩版登录绕过
+BedrockLoginBypass: true
+#同IP免登录
+LoginwiththesameIP: false
+#IP超时 (同IP免登子功能)
+IPTimeout: 5
+#Floodgate前缀保护
+FloodgatePrefixProtect: true
+#空背包
+Emptybackpack: true
 ```
 
 ### sql.yml
