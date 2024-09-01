@@ -27,9 +27,6 @@ public class CommandRegister implements CommandExecutor {
         if (Config.Settings.BedrockLoginBypass && LoginPlayerHelper.isFloodgatePlayer(player)){
             return true;
         }
-        if (Config.Settings.LoginwiththesameIP && LoginPlayerHelper.recordCurrentIP(player)){
-            return true;
-        }
         if (LoginPlayerHelper.isLogin(name)) {
             sender.sendMessage(Config.Language.REGISTER_AFTER_LOGIN_ALREADY);
             return true;
