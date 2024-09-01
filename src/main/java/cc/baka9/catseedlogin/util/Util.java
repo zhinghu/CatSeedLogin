@@ -14,7 +14,7 @@ public class Util {
     private static final Random random = new SecureRandom();
 
     public static boolean passwordIsDifficulty(String pwd) {
-        return passwordDifficultyRegex.matcher(pwd).find();
+        return !passwordDifficultyRegex.matcher(pwd).find();
     }
 
     public static String time2Str(long time) {

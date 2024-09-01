@@ -17,7 +17,7 @@ public class Config {
     public static int Port;
     public static String LoginServerName;
     public static String AuthKey;
-    private static Logger logger = PluginMain.instance.getLogger();
+    private static final Logger logger = PluginMain.instance.getLogger();
 
     public static void load() {
         File dataFolder = PluginMain.instance.getDataFolder();
@@ -45,11 +45,10 @@ public class Config {
             AuthKey = config.getString("AuthKey");
 
             // 合并日志输出
-            StringBuilder logBuilder = new StringBuilder();
-            logBuilder.append("Host: ").append(Host).append("\n");
-            logBuilder.append("Port: ").append(Port).append("\n");
-            logBuilder.append("LoginServerName: ").append(LoginServerName);
-            logger.info(logBuilder.toString());
+            String logBuilder = "Host: " + Host + "\n" +
+                    "Port: " + Port + "\n" +
+                    "LoginServerName: " + LoginServerName;
+            logger.info(logBuilder);
         } catch (IOException e) {
             e.printStackTrace();
         }

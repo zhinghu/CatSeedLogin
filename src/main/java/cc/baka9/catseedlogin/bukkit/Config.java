@@ -34,8 +34,8 @@ import org.bukkit.entity.Player;
  * sql.yml 数据库
  */
 public class Config {
-    private static CatSeedLogin plugin = CatSeedLogin.instance;
-    private static Map<String, String> offlineLocations = new ConcurrentHashMap<>();
+    private static final CatSeedLogin plugin = CatSeedLogin.instance;
+    private static final Map<String, String> offlineLocations = new ConcurrentHashMap<>();
 
     /**
      * 数据库

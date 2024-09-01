@@ -30,7 +30,9 @@ public class CatScheduler {
         }
         CatSeedLogin.morePaperLib.scheduling().entitySpecificScheduler(player).run(() -> {
             try {
-                teleportAsync.invoke(player, location);
+                if (teleportAsync != null) {
+                    teleportAsync.invoke(player, location);
+                }
             } catch (IllegalAccessException | InvocationTargetException e) {
                 throw new RuntimeException(e);
             }
