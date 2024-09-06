@@ -27,9 +27,6 @@ public class CommandRegister implements CommandExecutor {
         if (Config.Settings.BedrockLoginBypass && LoginPlayerHelper.isFloodgatePlayer(player)){
             return true;
         }
-        if (Config.Settings.LoginwiththesameIP && LoginPlayerHelper.recordCurrentIP(player)){
-            return true;
-        }
         if (LoginPlayerHelper.isLogin(name)) {
             sender.sendMessage(Config.Language.REGISTER_AFTER_LOGIN_ALREADY);
             return true;
@@ -42,7 +39,7 @@ public class CommandRegister implements CommandExecutor {
             sender.sendMessage(Config.Language.REGISTER_PASSWORD_CONFIRM_FAIL);
             return true;
         }
-        if (!Util.passwordIsDifficulty(args[0])) {
+        if (Util.passwordIsDifficulty(args[0])) {
             sender.sendMessage(Config.Language.COMMON_PASSWORD_SO_SIMPLE);
             return true;
         }

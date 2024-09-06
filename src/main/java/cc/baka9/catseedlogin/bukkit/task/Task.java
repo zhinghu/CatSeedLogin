@@ -9,8 +9,8 @@ import cc.baka9.catseedlogin.bukkit.CatSeedLogin;
 import space.arim.morepaperlib.scheduling.ScheduledTask;
 
 public abstract class Task implements Runnable {
-    private static List<ScheduledTask> scheduledTasks = new ArrayList<>();
-    private static CatSeedLogin plugin = CatSeedLogin.instance;
+    private static final List<ScheduledTask> scheduledTasks = new ArrayList<>();
+    private static final CatSeedLogin plugin = CatSeedLogin.instance;
     protected Task(){
     }
 

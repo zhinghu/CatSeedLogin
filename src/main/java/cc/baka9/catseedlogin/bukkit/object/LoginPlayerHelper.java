@@ -27,7 +27,7 @@ import cc.baka9.catseedlogin.bukkit.database.Cache;
 
 public class LoginPlayerHelper {
     private static final Set<LoginPlayer> set = new HashSet<>();
-    private static Map<String, Long> playerExitTimes = new ConcurrentHashMap<>();
+    private static final Map<String, Long> playerExitTimes = new ConcurrentHashMap<>();
 
     public static List<LoginPlayer> getList(){
         return new ArrayList<>(set);
@@ -100,16 +100,12 @@ public static boolean recordCurrentIP(Player player) {
 
     if (storedPlayer != null) {
         List<String> storedIPs = getStoredIPs(storedPlayer);
-        if (storedIPs != null) {
-            Long exitTime = playerExitTimes.get(playerName);
+        Long exitTime = playerExitTimes.get(playerName);
 
-            if (Config.Settings.IPTimeout == 0) {
-                return storedIPs.contains(currentIP);
-            } else {
-                if (exitTime != null && storedIPs.contains(currentIP) && (System.currentTimeMillis() - exitTime) <= Config.Settings.IPTimeout * 60 * 1000) {
-                    return true;
-                }
-            }
+        if (Config.Settings.IPTimeout == 0) {
+            return storedIPs.contains(currentIP);
+        } else {
+            return exitTime != null && storedIPs.contains(currentIP) && (System.currentTimeMillis() - exitTime) <= (long) Config.Settings.IPTimeout * 60 * 1000;
         }
     }
 
