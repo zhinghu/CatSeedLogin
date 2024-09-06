@@ -29,7 +29,7 @@ public class MySQL extends SQL {
             );
             return this.connection;
         } catch (ClassNotFoundException | SQLException e) {
-            throw new SQLException("无法建立数据库连接", e);
+            throw new SQLException(e);
         }
     }
 
