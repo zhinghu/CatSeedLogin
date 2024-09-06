@@ -102,6 +102,10 @@ public static boolean recordCurrentIP(Player player) {
         List<String> storedIPs = getStoredIPs(storedPlayer);
         Long exitTime = playerExitTimes.get(playerName);
 
+        if (currentIP.equals("127.0.0.1")) {
+            return false;
+        }
+
         if (Config.Settings.IPTimeout == 0) {
             return storedIPs.contains(currentIP);
         } else {

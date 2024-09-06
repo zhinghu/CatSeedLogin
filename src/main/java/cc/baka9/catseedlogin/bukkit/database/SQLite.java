@@ -9,7 +9,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class SQLite extends SQL {
     private Connection connection;
 
-    public SQLite(JavaPlugin javaPlugin){
+    public SQLite(JavaPlugin javaPlugin) {
         super(javaPlugin);
     }
 
@@ -17,14 +17,21 @@ public class SQLite extends SQL {
     public Connection getConnection() {
         try {
             if (connection == null || connection.isClosed()) {
-                if (!plugin.getDataFolder().exists()) plugin.getDataFolder().mkdir();
-                Class.forName("org.sqlite.JDBC");
-                connection = DriverManager.getConnection("jdbc:sqlite:" + plugin.getDataFolder().getAbsolutePath() + "/accounts.db");
+                connection = createConnection();
             }
             return connection;
-        } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
             return null;
+        }
+    }
+
+    private Connection createConnection() throws SQLException {
+        try {
+            if (!plugin.getDataFolder().exists()) plugin.getDataFolder().mkdir();
+            Class.forName("org.sqlite.JDBC");
+            return DriverManager.getConnection("jdbc:sqlite:" + plugin.getDataFolder().getAbsolutePath() + "/accounts.db");
+        } catch (ClassNotFoundException e) {
+            throw new SQLException(e);
         }
     }
 }
