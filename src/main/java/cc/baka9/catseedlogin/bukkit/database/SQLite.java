@@ -25,7 +25,7 @@ public class SQLite extends SQL {
             }
             return connection;
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Failed to get database connection", e);
+            logger.log(Level.SEVERE, "获取数据库连接失败", e);
             return null;
         }
     }
@@ -36,8 +36,8 @@ public class SQLite extends SQL {
             Class.forName("org.sqlite.JDBC");
             return DriverManager.getConnection("jdbc:sqlite:" + plugin.getDataFolder().getAbsolutePath() + "/accounts.db");
         } catch (ClassNotFoundException e) {
-            logger.log(Level.SEVERE, "SQLite JDBC driver not found", e);
-            throw new SQLException("SQLite JDBC driver not found", e);
+            logger.log(Level.SEVERE, "未找到 SQLite JDBC 驱动", e);
+            throw new SQLException("未找到 SQLite JDBC 驱动", e);
         }
     }
 }
