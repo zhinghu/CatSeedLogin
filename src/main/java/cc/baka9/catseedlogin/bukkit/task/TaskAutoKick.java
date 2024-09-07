@@ -14,22 +14,26 @@ public class TaskAutoKick extends Task {
     public Map<String, Long> playerJoinTime = new ConcurrentHashMap<>();
 
     @Override
-    public void run(){
+    public void run() {
         if (!Cache.isLoaded || Config.Settings.AutoKick < 1) return;
+
         long autoKickMs = Config.Settings.AutoKick * 1000L;
         long now = System.currentTimeMillis();
+
         for (Player player : Bukkit.getOnlinePlayers()) {
             String playerName = player.getName();
-            if (!LoginPlayerHelper.isLogin(playerName)) {
-                if (playerJoinTime.containsKey(playerName)) {
+            try {
+                if (!LoginPlayerHelper.isLogin(playerName)) {
+                    playerJoinTime.putIfAbsent(playerName, now);
                     if (now - playerJoinTime.get(playerName) > autoKickMs) {
-                        player.kickPlayer(Config.Language.AUTO_KICK.replace("{time}", Config.Settings.AutoKick + ""));
+                        player.kickPlayer(Config.Language.AUTO_KICK.replace("{time}", String.valueOf(Config.Settings.AutoKick)));
                     }
                 } else {
-                    playerJoinTime.put(playerName, now);
+                    playerJoinTime.remove(playerName);
                 }
-            } else {
-                playerJoinTime.remove(playerName);
+            } catch (Exception e) {
+                // 记录错误日志
+                e.printStackTrace();
             }
         }
     }
