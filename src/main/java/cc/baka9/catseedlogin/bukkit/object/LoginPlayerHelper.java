@@ -1,5 +1,7 @@
 package cc.baka9.catseedlogin.bukkit.object;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -102,7 +104,12 @@ public static boolean recordCurrentIP(Player player) {
         List<String> storedIPs = getStoredIPs(storedPlayer);
         Long exitTime = playerExitTimes.get(playerName);
 
-        if (currentIP.equals("127.0.0.1")) {
+        try {
+            InetAddress localHost = InetAddress.getByName("localhost");
+            if (InetAddress.getByName(currentIP).equals(localHost)) {
+                return false;
+            }
+        } catch (UnknownHostException e) {
             return false;
         }
 

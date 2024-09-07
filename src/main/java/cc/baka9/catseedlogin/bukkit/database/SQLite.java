@@ -14,24 +14,35 @@ public class SQLite extends SQL {
     }
 
     @Override
-    public Connection getConnection() {
-        try {
-            if (connection == null || connection.isClosed()) {
-                connection = createConnection();
-            }
-            return connection;
-        } catch (SQLException e) {
-            return null;
+    public synchronized Connection getConnection() throws SQLException {
+        if (connection == null || connection.isClosed()) {
+            connection = createConnection();
         }
+        return connection;
     }
 
     private Connection createConnection() throws SQLException {
         try {
-            if (!plugin.getDataFolder().exists()) plugin.getDataFolder().mkdir();
+            ensureDataFolderExists();
             Class.forName("org.sqlite.JDBC");
             return DriverManager.getConnection("jdbc:sqlite:" + plugin.getDataFolder().getAbsolutePath() + "/accounts.db");
         } catch (ClassNotFoundException e) {
             throw new SQLException(e);
+        }
+    }
+
+    private void ensureDataFolderExists() {
+        if (!plugin.getDataFolder().exists()) {
+            plugin.getDataFolder().mkdir();
+        }
+    }
+
+    public void closeConnection() {
+        try {
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+            }
+        } catch (SQLException e) {
         }
     }
 }
