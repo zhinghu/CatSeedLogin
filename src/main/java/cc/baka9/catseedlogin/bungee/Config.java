@@ -1,14 +1,14 @@
 package cc.baka9.catseedlogin.bungee;
 
-import net.md_5.bungee.config.Configuration;
-import net.md_5.bungee.config.ConfigurationProvider;
-import net.md_5.bungee.config.YamlConfiguration;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.logging.Logger;
+
+import net.md_5.bungee.config.Configuration;
+import net.md_5.bungee.config.ConfigurationProvider;
+import net.md_5.bungee.config.YamlConfiguration;
 
 public class Config {
 
@@ -21,8 +21,7 @@ public class Config {
 
     public static void load() {
         File dataFolder = PluginMain.instance.getDataFolder();
-        if (!dataFolder.exists()) {
-            dataFolder.mkdir();
+        if (!dataFolder.exists() && !dataFolder.mkdirs()) {
         }
 
         String fileName = "bungeecord.yml";
