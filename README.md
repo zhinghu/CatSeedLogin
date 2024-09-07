@@ -18,7 +18,7 @@
 
 ## 下载
 * [自动构建版](https://github.com/zhinghu/CatSeedLogin/actions/workflows/maven.yml)
-* [最新版](https://github.com/zhinghu/CatSeedLogin/releases)
+* [最新版](https://github.com/zhinghu/CatSeedLogin/releases/latest)
 * [旧版](https://github.com/CatSeed/CatSeedLogin/tags)
 
 ## 使用方式
