@@ -14,7 +14,7 @@ public class SQLite extends SQL {
     }
 
     @Override
-    public Connection getConnection() throws SQLException {
+    public synchronized Connection getConnection() throws SQLException {
         if (connection == null || connection.isClosed()) {
             connection = createConnection();
         }
