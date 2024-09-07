@@ -104,14 +104,14 @@ public static boolean recordCurrentIP(Player player) {
         List<String> storedIPs = getStoredIPs(storedPlayer);
         Long exitTime = playerExitTimes.get(playerName);
 
-    try {
-    InetAddress localHost = InetAddress.getByName("localhost");
-    if (InetAddress.getByName(currentIP).equals(localHost)) {
-        return false;
-    }
-} catch (UnknownHostException e) {
-    return false;
-}
+        try {
+            InetAddress localHost = InetAddress.getByName("localhost");
+            if (InetAddress.getByName(currentIP).equals(localHost)) {
+                return false;
+            }
+        } catch (UnknownHostException e) {
+            return false;
+        }
 
         if (Config.Settings.IPTimeout == 0) {
             return storedIPs.contains(currentIP);
