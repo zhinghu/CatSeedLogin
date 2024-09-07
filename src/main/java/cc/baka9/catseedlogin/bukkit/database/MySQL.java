@@ -16,7 +16,7 @@ public class MySQL extends SQL {
     }
 
     @Override
-    public Connection getConnection() throws SQLException {
+    public synchronized Connection getConnection() throws SQLException {
         if (isConnectionValid()) {
             return this.connection;
         }
