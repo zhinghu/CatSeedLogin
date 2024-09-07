@@ -30,15 +30,13 @@ public class Communication {
     }
 
     public static void socketServerStop() {
-
         if (serverSocket != null && !serverSocket.isClosed()) {
             try {
                 serverSocket.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                CatSeedLogin.instance.getLogger().warning("关闭Socket服务器时发生错误: " + e.getMessage());
             }
         }
-
     }
 
     /**
@@ -56,59 +54,48 @@ public class Communication {
             InetAddress inetAddress = InetAddress.getByName(Config.BungeeCord.Host);
             serverSocket = new ServerSocket(Integer.parseInt(Config.BungeeCord.Port), 50, inetAddress);
             while (!serverSocket.isClosed()) {
-                Socket socket;
-                try {
-                    socket = serverSocket.accept();
+                try (Socket socket = serverSocket.accept()) {
                     handleRequest(socket);
                 } catch (IOException e) {
-                    break;
+                    CatSeedLogin.instance.getLogger().warning("接受Socket连接时发生错误: " + e.getMessage());
                 }
             }
         } catch (UnknownHostException e) {
-            CatSeedLogin.instance.getLogger().warning("无法解析域名或IP地址");
-            e.printStackTrace();
+            CatSeedLogin.instance.getLogger().warning("无法解析域名或IP地址: " + e.getMessage());
         } catch (IOException e) {
-            e.printStackTrace();
+            CatSeedLogin.instance.getLogger().warning("启动Socket服务器时发生错误: " + e.getMessage());
         }
     }
-
 
     /**
      * 处理请求
      */
-private static void handleRequest(Socket socket) throws IOException {
-    try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
-        String requestType = bufferedReader.readLine();
-        if (requestType == null) {
-            socket.close();
-            return;
-        }
-        String playerName = bufferedReader.readLine();
-        switch (requestType) {
-            case "Connect":
-                handleConnectRequest(socket, playerName);
-                break;
-            case "KeepLoggedIn":
-                String time = bufferedReader.readLine();
-                String sign = bufferedReader.readLine();
-                handleKeepLoggedInRequest(playerName, time, sign);
-                break;
-            default:
-                break;
-        }
-    } finally {
-        if (!socket.isClosed()) {
-            socket.close();
+    private static void handleRequest(Socket socket) throws IOException {
+        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+            String requestType = bufferedReader.readLine();
+            if (requestType == null) {
+                return;
+            }
+            String playerName = bufferedReader.readLine();
+            switch (requestType) {
+                case "Connect":
+                    handleConnectRequest(socket, playerName);
+                    break;
+                case "KeepLoggedIn":
+                    String time = bufferedReader.readLine();
+                    String sign = bufferedReader.readLine();
+                    handleKeepLoggedInRequest(playerName, time, sign);
+                    break;
+                default:
+                    CatSeedLogin.instance.getLogger().warning("未知请求类型: " + requestType);
+                    break;
+            }
         }
     }
-}
 
     private static void handleKeepLoggedInRequest(String playerName, String time, String sign) {
-        // 验证请求的合法性
-        // 对比玩家名，时间戳，和authKey加密的结果（加密是因为如果登录服不在内网环境下，则可能会被人使用这个功能给发包来直接绕过登录）
         if (CommunicationAuth.encryption(playerName, time, Config.BungeeCord.AuthKey).equals(sign)) {
-            // 切换主线程给予登录状态
-            CatScheduler.runTask( () -> {
+            CatScheduler.runTask(() -> {
                 LoginPlayer lp = Cache.getIgnoreCase(playerName);
                 if (lp != null) {
                     LoginPlayerHelper.add(lp);
@@ -117,29 +104,26 @@ private static void handleRequest(Socket socket) throws IOException {
                         player.updateInventory();
                     }
                 }
-
             });
         }
     }
 
     private static void handleConnectRequest(Socket socket, String playerName) {
-        // 切换主线程获取是否已登录
-        CatScheduler.runTask( () -> {
+        CatScheduler.runTask(() -> {
             boolean result = LoginPlayerHelper.isLogin(playerName);
-
-            // 切换异步线程返回结果
             CatSeedLogin.instance.runTaskAsync(() -> {
                 try {
                     socket.getOutputStream().write(result ? 1 : 0);
-                    socket.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    CatSeedLogin.instance.getLogger().warning("发送连接结果时发生错误: " + e.getMessage());
+                } finally {
+                    try {
+                        socket.close();
+                    } catch (IOException e) {
+                        CatSeedLogin.instance.getLogger().warning("关闭Socket时发生错误: " + e.getMessage());
+                    }
                 }
-
             });
-
         });
     }
-
-
 }
