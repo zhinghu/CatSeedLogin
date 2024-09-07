@@ -6,7 +6,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
-import net.md_5.bungee.api.connection.Connection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ChatEvent;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
@@ -22,7 +21,6 @@ import net.md_5.bungee.event.EventHandler;
 public class Listeners implements Listener {
 
     private final ProxyServer proxyServer = ProxyServer.getInstance();
-
     private final List<String> loggedInPlayerList = new CopyOnWriteArrayList<>();
 
     /**
@@ -30,21 +28,13 @@ public class Listeners implements Listener {
      */
     @EventHandler
     public void onChat(ChatEvent event) {
-        Connection sender = event.getSender();
-        if (!event.isProxyCommand() || !(sender instanceof ProxiedPlayer)) return;
-        ProxiedPlayer proxiedPlayer = (ProxiedPlayer) sender;
-        String message = event.getMessage();
-        String playerName = proxiedPlayer.getName();
+        if (!event.isProxyCommand() || !(event.getSender() instanceof ProxiedPlayer)) return;
+        ProxiedPlayer player = (ProxiedPlayer) event.getSender();
+        String playerName = player.getName();
 
         if (!loggedInPlayerList.contains(playerName)) {
             event.setCancelled(true);
-
-            PluginMain.runAsync(() -> {
-                if (Communication.sendConnectRequest(playerName) == 1) {
-                    loggedInPlayerList.add(playerName);
-                    proxyServer.getPluginManager().dispatchCommand(proxiedPlayer, message.substring(1));
-                }
-            });
+            handleLogin(player, event.getMessage());
         }
     }
 
@@ -58,15 +48,10 @@ public class Listeners implements Listener {
         ServerInfo target = event.getTarget();
         if (event.isCancelled() || target.getName().equals(Config.LoginServerName)) return;
         ProxiedPlayer player = event.getPlayer();
+        String playerName = player.getName();
 
-        if (!loggedInPlayerList.contains(player.getName())) {
-            PluginMain.runAsync(() -> {
-                if (Communication.sendConnectRequest(player.getName()) == 1) {
-                    loggedInPlayerList.add(player.getName());
-                    player.connect(target);
-                }
-            });
-
+        if (!loggedInPlayerList.contains(playerName)) {
+            handleLogin(player, null);
             event.setTarget(proxyServer.getServerInfo(Config.LoginServerName));
         }
     }
@@ -80,11 +65,9 @@ public class Listeners implements Listener {
             ProxiedPlayer player = event.getPlayer();
             String playerName = player.getName();
 
-            PluginMain.runAsync(() -> {
-                if (loggedInPlayerList.contains(playerName)) {
-                    Communication.sendKeepLoggedInRequest(playerName);
-                }
-            });
+            if (loggedInPlayerList.contains(playerName)) {
+                PluginMain.runAsync(() -> Communication.sendKeepLoggedInRequest(playerName));
+            }
         }
     }
 
@@ -93,15 +76,13 @@ public class Listeners implements Listener {
      */
     @EventHandler
     public void onPlayerDisconnect(PlayerDisconnectEvent event) {
-        ProxiedPlayer player = event.getPlayer();
-        String playerName = player.getName();
-        loggedInPlayerList.remove(playerName);
+        loggedInPlayerList.remove(event.getPlayer().getName());
     }
 
     /**
      * 玩家在登录前，检查bc端和子服务器的登录状态，如果任一已登录，阻止连接
      */
-        @EventHandler
+    @EventHandler
     public void onPreLogin(PreLoginEvent event) {
         String playerName = event.getConnection().getName();
         try {
@@ -116,4 +97,18 @@ public class Listeners implements Listener {
         }
     }
 
+    /**
+     * 处理玩家登录逻辑
+     */
+    private void handleLogin(ProxiedPlayer player, String message) {
+        String playerName = player.getName();
+        PluginMain.runAsync(() -> {
+            if (Communication.sendConnectRequest(playerName) == 1) {
+                loggedInPlayerList.add(playerName);
+                if (message != null) {
+                    proxyServer.getPluginManager().dispatchCommand(player, message.substring(1));
+                }
+            }
+        });
+    }
 }
