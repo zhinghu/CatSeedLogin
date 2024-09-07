@@ -108,22 +108,24 @@ public class Communication {
         }
     }
 
-    private static void handleConnectRequest(Socket socket, String playerName) {
-        CatScheduler.runTask(() -> {
-            boolean result = LoginPlayerHelper.isLogin(playerName);
-            CatSeedLogin.instance.runTaskAsync(() -> {
+private static void handleConnectRequest(Socket socket, String playerName) {
+    CatScheduler.runTask(() -> {
+        boolean result = LoginPlayerHelper.isLogin(playerName);
+        CatSeedLogin.instance.runTaskAsync(() -> {
+            try {
+                socket.getOutputStream().write(result ? 1 : 0);
+                socket.getOutputStream().flush(); // 确保数据发送
+            } catch (IOException e) {
+                CatSeedLogin.instance.getLogger().warning("发送连接结果时发生错误: " + e.getMessage());
+            } finally {
                 try {
-                    socket.getOutputStream().write(result ? 1 : 0);
+                    socket.close();
                 } catch (IOException e) {
-                    CatSeedLogin.instance.getLogger().warning("发送连接结果时发生错误: " + e.getMessage());
-                } finally {
-                    try {
-                        socket.close();
-                    } catch (IOException e) {
-                        CatSeedLogin.instance.getLogger().warning("关闭Socket时发生错误: " + e.getMessage());
-                    }
+                    CatSeedLogin.instance.getLogger().warning("关闭Socket时发生错误: " + e.getMessage());
                 }
-            });
+            }
         });
-    }
+    });
+}
+
 }
