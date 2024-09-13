@@ -26,7 +26,7 @@ public class Communication {
         CatSeedLogin.instance.runTaskAsync(Communication::socketServerStop);
     }
 
-    public static void socketServerStop() {
+    public static synchronized void socketServerStop() {
         closeServerSocket(serverSocket);
     }
 
@@ -34,68 +34,75 @@ public class Communication {
         CatSeedLogin.instance.runTaskAsync(Communication::socketServerStart);
     }
 
-    private static void socketServerStart() {
+private static synchronized void socketServerStart() {
+    try {
+        InetAddress inetAddress = InetAddress.getByName(Config.BungeeCord.Host);
+        serverSocket = new ServerSocket(Integer.parseInt(Config.BungeeCord.Port), 50, inetAddress);
+        acceptConnections(serverSocket);
+    } catch (UnknownHostException e) {
+        CatSeedLogin.instance.getLogger().warning("无法解析域名或IP地址: " + e.getMessage());
+    } catch (IOException e) {
+        CatSeedLogin.instance.getLogger().warning("启动Socket服务器时发生错误: " + e.getMessage());
+    }
+}
+
+private static void acceptConnections(ServerSocket serverSocket) {
+    while (!serverSocket.isClosed()) {
         try {
-            InetAddress inetAddress = InetAddress.getByName(Config.BungeeCord.Host);
-            serverSocket = new ServerSocket(Integer.parseInt(Config.BungeeCord.Port), 50, inetAddress);
-            acceptConnections(serverSocket);
-        } catch (UnknownHostException e) {
-            CatSeedLogin.instance.getLogger().warning("无法解析域名或IP地址: " + e.getMessage());
+            Socket socket = serverSocket.accept();
+            executorService.submit(() -> handleRequest(socket));
         } catch (IOException e) {
-            CatSeedLogin.instance.getLogger().warning("启动Socket服务器时发生错误: " + e.getMessage());
+            if (serverSocket.isClosed()) {
+                break;
+            }
+            CatSeedLogin.instance.getLogger().warning("接受Socket连接时发生错误: " + e.getMessage());
         }
     }
+}
 
-    private static void acceptConnections(ServerSocket serverSocket) {
-        while (!serverSocket.isClosed()) {
-            try {
-                Socket socket = serverSocket.accept();
-                executorService.submit(() -> handleRequest(socket));
-            } catch (IOException e) {
-                CatSeedLogin.instance.getLogger().warning("接受Socket连接时发生错误: " + e.getMessage());
-            }
+
+private static void handleRequest(Socket socket) {
+    try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+         Socket autoCloseSocket = socket) {
+        String requestType = bufferedReader.readLine();
+        if (requestType == null) {
+            return;
         }
-    }
-
-    private static void handleRequest(Socket socket) {
-        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
-            String requestType = bufferedReader.readLine();
-            if (requestType == null) {
-                return;
-            }
-            String playerName = bufferedReader.readLine();
-            switch (requestType) {
-                case "Connect":
-                    handleConnectRequest(socket, playerName);
-                    break;
-                case "KeepLoggedIn":
-                    String time = bufferedReader.readLine();
-                    String sign = bufferedReader.readLine();
-                    handleKeepLoggedInRequest(playerName, time, sign);
-                    break;
-                default:
-                    CatSeedLogin.instance.getLogger().warning("未知请求类型: " + requestType);
-                    break;
-            }
-        } catch (IOException e) {
-            CatSeedLogin.instance.getLogger().warning("处理请求时发生错误: " + e.getMessage());
+        String playerName = bufferedReader.readLine();
+        switch (requestType) {
+            case "Connect":
+                handleConnectRequest(autoCloseSocket, playerName);
+                break;
+            case "KeepLoggedIn":
+                String time = bufferedReader.readLine();
+                String sign = bufferedReader.readLine();
+                handleKeepLoggedInRequest(playerName, time, sign);
+                break;
+            default:
+                CatSeedLogin.instance.getLogger().warning("未知请求类型: " + requestType);
+                break;
         }
+    } catch (IOException e) {
+        CatSeedLogin.instance.getLogger().warning("处理请求时发生错误: " + e.getMessage());
     }
+}
 
-    private static void handleKeepLoggedInRequest(String playerName, String time, String sign) {
-        if (CommunicationAuth.encryption(playerName, time, Config.BungeeCord.AuthKey).equals(sign)) {
-            CatScheduler.runTask(() -> {
-                LoginPlayer lp = Cache.getIgnoreCase(playerName);
-                if (lp != null) {
-                    LoginPlayerHelper.add(lp);
-                    Player player = Bukkit.getPlayerExact(playerName);
-                    if (player != null) {
-                        player.updateInventory();
-                    }
+private static void handleKeepLoggedInRequest(String playerName, String time, String sign) {
+    if (CommunicationAuth.encryption(playerName, time, Config.BungeeCord.AuthKey).equals(sign)) {
+        CatScheduler.runTask(() -> {
+            LoginPlayer lp = Cache.getIgnoreCase(playerName);
+            if (lp != null) {
+                LoginPlayerHelper.add(lp);
+                Player player = Bukkit.getPlayerExact(playerName);
+                if (player != null) {
+                    player.updateInventory();
                 }
-            });
-        }
+            } else {
+                CatSeedLogin.instance.getLogger().warning("玩家 " + playerName + " 未找到在缓存中。");
+            }
+        });
     }
+}
 
     private static void handleConnectRequest(Socket socket, String playerName) {
         CatScheduler.runTask(() -> {
