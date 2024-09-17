@@ -93,7 +93,7 @@ public class Listeners implements Listener {
         } catch (Exception e) {
             event.setCancelReason(new TextComponent("发生错误，请稍后再试。"));
             event.setCancelled(true);
-            e.printStackTrace();
+            throw e;
         }
     }
 
