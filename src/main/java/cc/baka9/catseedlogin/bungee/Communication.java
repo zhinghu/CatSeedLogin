@@ -1,12 +1,12 @@
 package cc.baka9.catseedlogin.bungee;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.io.IOException;
+import java.io.BufferedWriter;
+import java.io.OutputStreamWriter;
 
-import cc.baka9.catseedlogin.util.CommunicationAuth;
 import net.md_5.bungee.api.ProxyServer;
+import cc.baka9.catseedlogin.util.CommunicationAuth;
 
 /**
  * bc 与 bukkit 的通讯交流
@@ -16,7 +16,11 @@ public class Communication {
     private static final int PORT = Config.Port;
 
     public static int sendConnectRequest(String playerName) {
-        try (Socket socket = getSocket(); BufferedWriter writer = getSocketBufferedWriter(socket)) {
+        Socket socket = null;
+        BufferedWriter writer = null;
+        try {
+            socket = getSocket();
+            writer = getSocketBufferedWriter(socket);
             writeMessage(writer, "Connect", playerName);
             return socket.getInputStream().read();
         } catch (IOException e) {
@@ -26,7 +30,11 @@ public class Communication {
     }
 
     public static void sendKeepLoggedInRequest(String playerName) {
-        try (Socket socket = getSocket(); BufferedWriter writer = getSocketBufferedWriter(socket)) {
+        Socket socket = null;
+        BufferedWriter writer = null;
+        try {
+            socket = getSocket();
+            writer = getSocketBufferedWriter(socket);
             long currentTime = System.currentTimeMillis();
             String time = String.valueOf(currentTime);
             String sign = CommunicationAuth.encryption(playerName, time, Config.AuthKey);

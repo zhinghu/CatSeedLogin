@@ -1,22 +1,22 @@
 package cc.baka9.catseedlogin.bukkit;
 
-import java.net.Socket;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.ServerSocket;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import cc.baka9.catseedlogin.bukkit.database.Cache;
-import cc.baka9.catseedlogin.util.CommunicationAuth;
 import cc.baka9.catseedlogin.bukkit.object.LoginPlayer;
 import cc.baka9.catseedlogin.bukkit.object.LoginPlayerHelper;
+import cc.baka9.catseedlogin.util.CommunicationAuth;
 
 public class Communication {
     private static ServerSocket serverSocket;
@@ -62,8 +62,9 @@ private static void acceptConnections(ServerSocket serverSocket) {
 
 
 private static void handleRequest(Socket socket) {
-    try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-         Socket autoCloseSocket = socket) {
+    BufferedReader bufferedReader = null;
+    try {
+        bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         String requestType = bufferedReader.readLine();
         if (requestType == null) {
             return;
@@ -71,7 +72,7 @@ private static void handleRequest(Socket socket) {
         String playerName = bufferedReader.readLine();
         switch (requestType) {
             case "Connect":
-                handleConnectRequest(autoCloseSocket, playerName);
+                handleConnectRequest(socket, playerName);
                 break;
             case "KeepLoggedIn":
                 String time = bufferedReader.readLine();
