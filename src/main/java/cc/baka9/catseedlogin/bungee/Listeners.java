@@ -28,14 +28,14 @@ public class Listeners implements Listener {
      */
     @EventHandler
     public void onChat(ChatEvent event) {
-        if (!(event.isProxyCommand() && event.getSender() instanceof ProxiedPlayer)) return;
+        if (event.isProxyCommand() && event.getSender() instanceof ProxiedPlayer) {
+            ProxiedPlayer player = (ProxiedPlayer) event.getSender();
+            String playerName = player.getName();
 
-        ProxiedPlayer player = (ProxiedPlayer) event.getSender();
-        String playerName = player.getName();
-
-        if (!loggedInPlayerList.contains(playerName)) {
-            event.setCancelled(true);
-            handleLogin(player, event.getMessage());
+            if (!loggedInPlayerList.contains(playerName)) {
+                event.setCancelled(true);
+                handleLogin(player, event.getMessage());
+            }
         }
     }
 
@@ -47,14 +47,14 @@ public class Listeners implements Listener {
     @EventHandler
     public void onServerConnect(ServerConnectEvent event) {
         ServerInfo target = event.getTarget();
-        if (event.isCancelled() || target.getName().equals(Config.LoginServerName)) return;
+        if (!event.isCancelled() && !target.getName().equals(Config.LoginServerName)) {
+            ProxiedPlayer player = event.getPlayer();
+            String playerName = player.getName();
 
-        ProxiedPlayer player = event.getPlayer();
-        String playerName = player.getName();
-
-        if (!loggedInPlayerList.contains(playerName)) {
-            handleLogin(player, null);
-            event.setTarget(proxyServer.getServerInfo(Config.LoginServerName));
+            if (!loggedInPlayerList.contains(playerName)) {
+                handleLogin(player, null);
+                event.setTarget(proxyServer.getServerInfo(Config.LoginServerName));
+            }
         }
     }
 
@@ -65,10 +65,8 @@ public class Listeners implements Listener {
     public void onServerConnected(ServerConnectedEvent event) {
         if (event.getServer().getInfo().getName().equals(Config.LoginServerName)) {
             ProxiedPlayer player = event.getPlayer();
-            String playerName = player.getName();
-
-            if (loggedInPlayerList.contains(playerName)) {
-                PluginMain.runAsync(() -> Communication.sendKeepLoggedInRequest(playerName));
+            if (loggedInPlayerList.contains(player.getName())) {
+                PluginMain.runAsync(() -> Communication.sendKeepLoggedInRequest(player.getName()));
             }
         }
     }
@@ -107,7 +105,7 @@ public class Listeners implements Listener {
         PluginMain.runAsync(() -> {
                 if (Communication.sendConnectRequest(playerName) == 1) {
                     loggedInPlayerList.add(playerName);
-                    if (message != null) {
+                    if (message != null && !message.isEmpty()) {
                         proxyServer.getPluginManager().dispatchCommand(player, message.substring(1));
                     }
             }
