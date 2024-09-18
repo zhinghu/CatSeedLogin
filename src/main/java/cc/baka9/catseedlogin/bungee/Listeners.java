@@ -28,7 +28,8 @@ public class Listeners implements Listener {
      */
     @EventHandler
     public void onChat(ChatEvent event) {
-        if (!event.isProxyCommand() || !(event.getSender() instanceof ProxiedPlayer)) return;
+        if (!(event.isProxyCommand() && event.getSender() instanceof ProxiedPlayer)) return;
+
         ProxiedPlayer player = (ProxiedPlayer) event.getSender();
         String playerName = player.getName();
 
@@ -47,6 +48,7 @@ public class Listeners implements Listener {
     public void onServerConnect(ServerConnectEvent event) {
         ServerInfo target = event.getTarget();
         if (event.isCancelled() || target.getName().equals(Config.LoginServerName)) return;
+
         ProxiedPlayer player = event.getPlayer();
         String playerName = player.getName();
 
@@ -103,11 +105,11 @@ public class Listeners implements Listener {
     private void handleLogin(ProxiedPlayer player, String message) {
         String playerName = player.getName();
         PluginMain.runAsync(() -> {
-            if (Communication.sendConnectRequest(playerName) == 1) {
-                loggedInPlayerList.add(playerName);
-                if (message != null) {
-                    proxyServer.getPluginManager().dispatchCommand(player, message.substring(1));
-                }
+                if (Communication.sendConnectRequest(playerName) == 1) {
+                    loggedInPlayerList.add(playerName);
+                    if (message != null) {
+                        proxyServer.getPluginManager().dispatchCommand(player, message.substring(1));
+                    }
             }
         });
     }
