@@ -6,7 +6,6 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 
 import cc.baka9.catseedlogin.util.CommunicationAuth;
-import net.md_5.bungee.api.ProxyServer;
 
 /**
  * bc 与 bukkit 的通讯交流
@@ -21,7 +20,6 @@ public class Communication {
             writeMessage(writer, "Connect", playerName);
             return socket.getInputStream().read();
         } catch (IOException e) {
-            ProxyServer.getInstance().getLogger().severe("发生 I/O 异常: " + e.getMessage());
             return 0;
         }
     }
@@ -34,7 +32,6 @@ public class Communication {
             String sign = CommunicationAuth.encryption(playerName, time, Config.AuthKey);
             writeMessage(writer, "KeepLoggedIn", playerName, time, sign);
         } catch (IOException e) {
-            ProxyServer.getInstance().getLogger().severe("发生 I/O 异常: " + e.getMessage());
         }
     }
 
