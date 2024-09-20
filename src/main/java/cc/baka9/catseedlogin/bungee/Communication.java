@@ -1,9 +1,9 @@
 package cc.baka9.catseedlogin.bungee;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.io.IOException;
+import java.io.BufferedWriter;
+import java.io.OutputStreamWriter;
 
 import cc.baka9.catseedlogin.util.CommunicationAuth;
 
@@ -15,27 +15,29 @@ public class Communication {
     private static final int PORT = Config.Port;
 
     public static int sendConnectRequest(String playerName) {
+        return sendRequest("Connect", playerName);
+    }
+
+    public static void sendKeepLoggedInRequest(String playerName) {
+        long currentTime = System.currentTimeMillis();
+        String time = String.valueOf(currentTime);
+        String sign = CommunicationAuth.encryption(playerName, time, Config.AuthKey);
+        sendRequest("KeepLoggedIn", playerName, time, sign);
+    }
+
+    private static int sendRequest(String requestType, String... messages) {
         try (Socket socket = new Socket(HOST, PORT);
              BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()))) {
-            writeMessage(writer, "Connect", playerName);
+            writeMessage(writer, requestType, messages);
             return socket.getInputStream().read();
         } catch (IOException e) {
             return 0;
         }
     }
 
-    public static void sendKeepLoggedInRequest(String playerName) {
-        try (Socket socket = new Socket(HOST, PORT);
-             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()))) {
-            long currentTime = System.currentTimeMillis();
-            String time = String.valueOf(currentTime);
-            String sign = CommunicationAuth.encryption(playerName, time, Config.AuthKey);
-            writeMessage(writer, "KeepLoggedIn", playerName, time, sign);
-        } catch (IOException e) {
-        }
-    }
-
-    private static void writeMessage(BufferedWriter writer, String... messages) throws IOException {
+    private static void writeMessage(BufferedWriter writer, String requestType, String... messages) throws IOException {
+        writer.write(requestType);
+        writer.newLine();
         for (String message : messages) {
             writer.write(message);
             writer.newLine();
