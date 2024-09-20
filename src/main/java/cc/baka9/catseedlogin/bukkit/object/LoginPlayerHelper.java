@@ -116,7 +116,7 @@ public static boolean recordCurrentIP(Player player) {
         if (Config.Settings.IPTimeout == 0) {
             return storedIPs.contains(currentIP);
         } else {
-            return exitTime != null && storedIPs.contains(currentIP) && (System.currentTimeMillis() - exitTime) <= (long) Config.Settings.IPTimeout * 60 * 1000;
+            return exitTime != null && storedIPs.contains(currentIP) && (System.currentTimeMillis() - exitTime) <= (long) Config.Settings.IPTimeout * 60 * 1000L;
         }
     }
 

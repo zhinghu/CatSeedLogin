@@ -1,29 +1,29 @@
 package cc.baka9.catseedlogin.bukkit;
 
-import java.io.BufferedInputStream;
 import java.io.File;
+import java.util.Map;
+import java.util.List;
+import java.util.Optional;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.reflect.Field;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
+import java.lang.reflect.Field;
 import java.util.regex.Pattern;
+import java.io.InputStreamReader;
+import java.io.BufferedInputStream;
 import java.util.stream.Collectors;
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.ConcurrentHashMap;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 
 /**
  * 加载/保存/重载 yml配置文件
@@ -95,6 +95,7 @@ public class Config {
         public static boolean CanTpSpawnLocation;
         public static List<Pattern> CommandWhiteList = new ArrayList<>();
         public static int AutoKick;
+        public static String NamePattern;
         // 死亡状态退出游戏是否记录退出位置 (玩家可以通过死亡时退出服务器然后重新进入，再复活，登录返回死亡地点)
         public static boolean DeathStateQuitRecordLocation;
         public static boolean FloodgatePrefixProtect;
@@ -115,6 +116,7 @@ public class Config {
             ReenterInterval = config.getLong("ReenterInterval", resourceConfig.getLong("ReenterInterval"));
             AfterLoginBack = config.getBoolean("AfterLoginBack", resourceConfig.getBoolean("AfterLoginBack"));
             CanTpSpawnLocation = config.getBoolean("CanTpSpawnLocation", resourceConfig.getBoolean("CanTpSpawnLocation"));
+            NamePattern = config.getString("NamePattern", resourceConfig.getString("NamePattern", "^\\w+$"));
             List<String> commandWhiteList = config.getStringList("CommandWhiteList");
             if (commandWhiteList.isEmpty()) {
                 commandWhiteList = resourceConfig.getStringList("CommandWhiteList");
@@ -151,6 +153,7 @@ public class Config {
             config.set("CommandWhiteList", CommandWhiteList.stream().map(Pattern::toString).collect(Collectors.toList()));
             config.set("DeathStateQuitRecordLocation", DeathStateQuitRecordLocation);
             config.set("FloodgatePrefixProtect", FloodgatePrefixProtect);
+            config.set("NamePattern", NamePattern);
             try {
                 config.save(new File(CatSeedLogin.instance.getDataFolder(), "settings.yml"));
             } catch (IOException e) {
