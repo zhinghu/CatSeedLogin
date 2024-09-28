@@ -100,7 +100,8 @@ private static void handleKeepLoggedInRequest(String playerName, String time, St
                     player.updateInventory();
                 }
             } else {
-                CatSeedLogin.instance.getLogger().warning("玩家 " + playerName + " 未找到在缓存中。");
+                String sanitizedPlayerName = playerName.replace("\n", "").replace("\r", "");
+                CatSeedLogin.instance.getLogger().warning("玩家 " + sanitizedPlayerName + " 未找到在缓存中。");
             }
         });
     }
