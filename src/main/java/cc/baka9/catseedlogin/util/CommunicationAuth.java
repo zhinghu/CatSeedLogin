@@ -9,7 +9,7 @@ public class CommunicationAuth {
 
     static {
         try {
-            messageDigest = MessageDigest.getInstance("SHA-256");
+            messageDigest = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
