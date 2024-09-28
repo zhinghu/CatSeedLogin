@@ -80,7 +80,8 @@ private static void handleRequest(Socket socket) {
                 handleKeepLoggedInRequest(playerName, time, sign);
                 break;
             default:
-                CatSeedLogin.instance.getLogger().warning("未知请求类型: " + requestType);
+                String sanitizedRequestType = requestType.replace("\n", "").replace("\r", "");
+                CatSeedLogin.instance.getLogger().warning("未知请求类型: " + sanitizedRequestType);
                 break;
         }
     } catch (IOException e) {
