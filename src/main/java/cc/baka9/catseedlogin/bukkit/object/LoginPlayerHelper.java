@@ -105,8 +105,7 @@ public static boolean recordCurrentIP(Player player) {
         Long exitTime = playerExitTimes.get(playerName);
 
         try {
-            InetAddress localHost = InetAddress.getByName("localhost");
-            if (InetAddress.getByName(currentIP).equals(localHost)) {
+            if (InetAddress.getByName(currentIP).isLoopbackAddress()) {
                 return false;
             }
         } catch (UnknownHostException e) {
