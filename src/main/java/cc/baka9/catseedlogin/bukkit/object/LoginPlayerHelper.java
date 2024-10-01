@@ -4,7 +4,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,7 +28,7 @@ import cc.baka9.catseedlogin.bukkit.Config;
 import cc.baka9.catseedlogin.bukkit.database.Cache;
 
 public class LoginPlayerHelper {
-    private static final Set<LoginPlayer> set = new HashSet<>();
+    private static final Set<LoginPlayer> set = ConcurrentHashMap.newKeySet();
     private static final Map<String, Long> playerExitTimes = new ConcurrentHashMap<>();
 
     public static List<LoginPlayer> getList(){
@@ -36,53 +36,41 @@ public class LoginPlayerHelper {
     }
 
     public static void add(LoginPlayer lp){
-        synchronized (set) {
-
-            set.add(lp);
-        }
+        set.add(lp);
     }
 
     public static void remove(LoginPlayer lp){
-        synchronized (set) {
-
-            set.remove(lp);
-        }
+        set.remove(lp);
     }
 
     public static void remove(String name){
-        synchronized (set) {
-            for (LoginPlayer lp : set) {
-                if (lp.getName().equals(name)) {
-                    set.remove(lp);
-                    break;
-                }
+        Iterator<LoginPlayer> iterator = set.iterator();
+        while (iterator.hasNext()) {
+            LoginPlayer lp = iterator.next();
+            if (lp.getName().equals(name)) {
+                iterator.remove();
+                break;
             }
         }
     }
 
     public static boolean isLogin(String name){
-        synchronized (set) {
-            if (Config.Settings.BedrockLoginBypass && isFloodgatePlayer(name)){
-                return true;
-            }
-            if (Config.Settings.LoginwiththesameIP && recordCurrentIP(name)){
-                return true;
-            }
-            for (LoginPlayer lp : set) {
-                if (lp.getName().equals(name)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
-
-    public static boolean isRegister(String name){
         if (Config.Settings.BedrockLoginBypass && isFloodgatePlayer(name)){
             return true;
         }
-        return Cache.getIgnoreCase(name) != null;
+        if (Config.Settings.LoginwiththesameIP && recordCurrentIP(name)){
+            return true;
+        }
+        for (LoginPlayer lp : set) {
+            if (lp.getName().equals(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
+    public static boolean isRegister(String name){
+        return Config.Settings.BedrockLoginBypass && isFloodgatePlayer(name) || Cache.getIgnoreCase(name) != null;
     }
 
     public static boolean recordCurrentIP(String name) {
@@ -90,92 +78,57 @@ public class LoginPlayerHelper {
         return player != null && recordCurrentIP(player);
     }
 
-public static boolean recordCurrentIP(Player player) {
-    String playerName = player.getName();
-    String currentIP = player.getAddress() != null ? player.getAddress().getAddress().getHostAddress() : null;
+    public static boolean recordCurrentIP(Player player) {
+        String currentIP = (player.getAddress() != null) ? player.getAddress().getAddress().getHostAddress() : null;
 
-    if (currentIP == null) {
-        return false;
-    }
-
-    LoginPlayer storedPlayer = Cache.getIgnoreCase(playerName);
-
-    if (storedPlayer != null) {
-        List<String> storedIPs = getStoredIPs(storedPlayer);
-        Long exitTime = playerExitTimes.get(playerName);
-
-        try {
-            if (InetAddress.getByName(currentIP).isLoopbackAddress()) {
-                return false;
-            }
-        } catch (UnknownHostException e) {
+        if (currentIP == null) {
             return false;
         }
 
-        if (Config.Settings.IPTimeout == 0) {
-            return storedIPs.contains(currentIP);
-        } else {
-            return exitTime != null && storedIPs.contains(currentIP) && (System.currentTimeMillis() - exitTime) <= (long) Config.Settings.IPTimeout * 60 * 1000L;
+        LoginPlayer storedPlayer = Cache.getIgnoreCase(player.getName());
+
+        if (storedPlayer != null) {
+            List<String> storedIPs = getStoredIPs(storedPlayer);
+            Long exitTime = playerExitTimes.get(player.getName());
+
+            try {
+                if (InetAddress.getByName(currentIP).isLoopbackAddress()) {
+                    return false;
+                }
+            } catch (UnknownHostException e) {
+                return false;
+            }
+
+            if (Config.Settings.IPTimeout == 0) {
+                return storedIPs.contains(currentIP);
+            } else {
+                return exitTime != null && storedIPs.contains(currentIP) &&
+                       (System.currentTimeMillis() - exitTime) <= (long) Config.Settings.IPTimeout * 60 * 1000L;
+            }
+        }
+
+        return false;
+    }
+
+    public void recordPlayerExitTime(String playerName) {
+        if (Config.Settings.IPTimeout != 0 && isLogin(playerName)) {
+            playerExitTimes.put(playerName, System.currentTimeMillis());
         }
     }
 
-    return false;
-}
-
-
-public void recordPlayerExitTime(String playerName) {
-    if (Config.Settings.IPTimeout != 0 && isLogin(playerName)) {
-        playerExitTimes.put(playerName, System.currentTimeMillis());
-    }
-}
-
-
-
-
-
-
-
-
     public void onPlayerQuit(String playerName) {
-        if (Config.Settings.IPTimeout != 0 && isLogin(playerName)) {
-        playerExitTimes.put(playerName, System.currentTimeMillis());
-    }
+        recordPlayerExitTime(playerName);
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-public static List<String> getStoredIPs(LoginPlayer lp) {
-    List<String> storedIPs = new ArrayList<>();
-
-    String ipsString = lp.getIps();
-    if (ipsString != null) {
-        String[] ipsArray = ipsString.split(";");
-        storedIPs.addAll(Arrays.asList(ipsArray));
+    public static List<String> getStoredIPs(LoginPlayer lp) {
+        List<String> storedIPs = new ArrayList<>();
+        String ipsString = lp.getIps();
+        if (ipsString != null) {
+            String[] ipsArray = ipsString.split(";");
+            storedIPs.addAll(Arrays.asList(ipsArray));
+        }
+        return storedIPs;
     }
-
-    return storedIPs;
-}
-
-
-
-
-
 
     public static boolean isFloodgatePlayer(String name) {
         Player player = Bukkit.getPlayerExact(name);
@@ -183,15 +136,13 @@ public static List<String> getStoredIPs(LoginPlayer lp) {
     }
 
     public static boolean isFloodgatePlayer(Player player) {
-        return Bukkit.getPluginManager().getPlugin("floodgate") != null && FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId());
+        return Bukkit.getPluginManager().getPlugin("floodgate") != null &&
+               FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId());
     }
 
     public static Long getLastLoginTime(String name) {
         LoginPlayer loginPlayer = Cache.getIgnoreCase(name);
-        if (loginPlayer == null) {
-            return null;
-        }
-        return loginPlayer.getLastAction();
+        return (loginPlayer != null) ? loginPlayer.getLastAction() : null;
     }
 
     // 记录登录IP
@@ -215,25 +166,24 @@ public static List<String> getStoredIPs(LoginPlayer lp) {
 
     // ProtocolLib发包空背包
     public static void sendBlankInventoryPacket(Player player) {
-    if (!Config.Settings.Emptybackpack) return;
+        if (!Config.Settings.Emptybackpack) return;
 
-    ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
-    PacketContainer inventoryPacket = protocolManager.createPacket(PacketType.Play.Server.WINDOW_ITEMS);
-    inventoryPacket.getIntegers().write(0, 0);
+        ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
+        PacketContainer inventoryPacket = protocolManager.createPacket(PacketType.Play.Server.WINDOW_ITEMS);
+        inventoryPacket.getIntegers().write(0, 0);
 
-    int inventorySize = 45;
-    ItemStack[] blankInventory = new ItemStack[inventorySize];
-    Arrays.fill(blankInventory, new ItemStack(Material.AIR));
+        int inventorySize = 45;
+        ItemStack[] blankInventory = new ItemStack[inventorySize];
+        Arrays.fill(blankInventory, new ItemStack(Material.AIR));
 
-    StructureModifier<ItemStack[]> itemArrayModifier = inventoryPacket.getItemArrayModifier();
-    if (itemArrayModifier.size() > 0) {
-        itemArrayModifier.write(0, blankInventory);
-    } else {
-        StructureModifier<List<ItemStack>> itemListModifier = inventoryPacket.getItemListModifier();
-        itemListModifier.write(0, Arrays.asList(blankInventory));
+        StructureModifier<ItemStack[]> itemArrayModifier = inventoryPacket.getItemArrayModifier();
+        if (itemArrayModifier.size() > 0) {
+            itemArrayModifier.write(0, blankInventory);
+        } else {
+            StructureModifier<List<ItemStack>> itemListModifier = inventoryPacket.getItemListModifier();
+            itemListModifier.write(0, Arrays.asList(blankInventory));
+        }
+
+        protocolManager.sendServerPacket(player, inventoryPacket, false);
     }
-
-    protocolManager.sendServerPacket(player, inventoryPacket, false);
-}
-
 }
