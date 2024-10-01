@@ -19,10 +19,10 @@ public class Mail {
         email.setAuthenticator(new DefaultAuthenticator(Config.EmailVerify.EmailAccount, Config.EmailVerify.EmailPassword));
         if (Config.EmailVerify.SSLAuthVerify) {
             email.setSSLOnConnect(true);
+            email.setSSLCheckServerIdentity(true);
         } else {
             email.setStartTLSEnabled(true);
         }
-        email.setSSLCheckServerIdentity(true);
         email.setFrom(Config.EmailVerify.EmailAccount, Config.EmailVerify.FromPersonal);
         email.setSubject(subject);
         email.setMsg(content);
