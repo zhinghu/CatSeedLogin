@@ -22,6 +22,7 @@ public class Mail {
         } else {
             email.setStartTLSEnabled(true);
         }
+        email.setSSLCheckServerIdentity(true);
         email.setFrom(Config.EmailVerify.EmailAccount, Config.EmailVerify.FromPersonal);
         email.setSubject(subject);
         email.setMsg(content);
