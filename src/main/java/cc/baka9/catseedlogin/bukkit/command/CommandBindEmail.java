@@ -54,7 +54,7 @@ public class CommandBindEmail implements CommandExecutor {
                     if (bindEmailOptional.isPresent() && bindEmailOptional.get().getEmail().equals(mail)) {
                         sender.sendMessage("§c已经向 " + mail + " 邮箱中发送验证码，请不要重复此操作");
                     } else {
-                        EmailCode bindEmail = EmailCode.create(name, mail, 1000 * 60 * 20, EmailCode.Type.Bind);
+                        EmailCode bindEmail = EmailCode.create(name, mail, 1000 * 60 * 5, EmailCode.Type.Bind);
                         sender.sendMessage("§6向邮箱发送验证码中...");
                         sendEmailCode(sender, name, mail, bindEmail);
                     }
