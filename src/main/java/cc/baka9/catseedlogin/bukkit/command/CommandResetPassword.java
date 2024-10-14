@@ -47,7 +47,7 @@ public class CommandResetPassword implements CommandExecutor {
                     sender.sendMessage(Config.Language.RESETPASSWORD_EMAIL_REPEAT_SEND_MESSAGE.replace("{email}", optionalEmailCode.get().getEmail()));
                 } else {
                     //20分钟有效期的验证码
-                    EmailCode emailCode = EmailCode.create(name, lp.getEmail(), 1000 * 60 * 20, EmailCode.Type.ResetPassword);
+                    EmailCode emailCode = EmailCode.create(name, lp.getEmail(), 1000 * 60 * 5, EmailCode.Type.ResetPassword);
                     sender.sendMessage(Config.Language.RESETPASSWORD_EMAIL_SENDING_MESSAGE.replace("{email}", lp.getEmail()));
                     CatSeedLogin.instance.runTaskAsync(() -> {
                         try {
