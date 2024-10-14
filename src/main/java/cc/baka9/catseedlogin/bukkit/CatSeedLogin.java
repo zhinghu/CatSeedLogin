@@ -37,13 +37,14 @@ public class CatSeedLogin extends JavaPlugin implements Listener {
     private LoginPlayerHelper timeoutManager;
 
     @Override
-    public void onEnable(){
+    public void onEnable() {
         instance = this;
         morePaperLib = new MorePaperLib(this);
         HandySchedulerUtil.init(this);
         getServer().getPluginManager().registerEvents(this, this);
         timeoutManager = new LoginPlayerHelper();
-        //Config
+
+        // Config
         try {
             Config.load();
             Config.save();
@@ -51,20 +52,20 @@ public class CatSeedLogin extends JavaPlugin implements Listener {
             e.printStackTrace();
             getServer().getLogger().warning("加载配置文件时出错，请检查你的配置文件。");
         }
+
         sql = Config.MySQL.Enable ? new MySQL(this) : new SQLite(this);
         try {
-
             sql.init();
-
             Cache.refreshAll();
         } catch (Exception e) {
             getLogger().warning("§c加载数据库时出错");
             e.printStackTrace();
         }
-        //Listeners
+
+        // Listeners
         getServer().getPluginManager().registerEvents(new Listeners(), this);
 
-        //ProtocolLibListeners
+        // ProtocolLibListeners
         if (Config.Settings.Emptybackpack) {
             try {
                 Class.forName("com.comphenix.protocol.ProtocolLib");
@@ -75,17 +76,24 @@ public class CatSeedLogin extends JavaPlugin implements Listener {
             }
         }
 
-        // bc
+        // BungeeCord
         if (Config.BungeeCord.Enable) {
             Communication.socketServerStartAsync();
         }
 
         // Floodgate
-        if (Bukkit.getPluginManager().getPlugin("floodgate") != null && Config.Settings.BedrockLoginBypass){
+        if (Bukkit.getPluginManager().getPlugin("floodgate") != null && Config.Settings.BedrockLoginBypass) {
             getLogger().info("检测到floodgate，基岩版兼容已装载");
         }
 
-        //Commands
+        // Commands
+        registerCommands();
+
+        // Task
+        Task.runAll();
+    }
+
+    private void registerCommands() {
         getServer().getPluginCommand("login").setExecutor(new CommandLogin());
         getServer().getPluginCommand("login").setTabCompleter((commandSender, command, s, args)
                 -> args.length == 1 ? Collections.singletonList("密码") : new ArrayList<>(0));
@@ -114,6 +122,7 @@ public class CatSeedLogin extends JavaPlugin implements Listener {
             }
             return Collections.emptyList();
         });
+
         PluginCommand resetpassword = getServer().getPluginCommand("resetpassword");
         resetpassword.setExecutor(new CommandResetPassword());
         resetpassword.setTabCompleter((commandSender, command, s, args) -> {
@@ -130,12 +139,9 @@ public class CatSeedLogin extends JavaPlugin implements Listener {
             }
             return Collections.emptyList();
         });
+
         PluginCommand catseedlogin = getServer().getPluginCommand("catseedlogin");
         catseedlogin.setExecutor(new CommandCatSeedLogin());
-
-        //Task
-        Task.runAll();
-
     }
 
     @EventHandler
@@ -153,17 +159,16 @@ public class CatSeedLogin extends JavaPlugin implements Listener {
         }.runTaskTimer(this, 0L, 20L);
     }
 
-
     @Override
-    public void onDisable(){
+    public void onDisable() {
         Task.cancelAll();
         Bukkit.getOnlinePlayers().forEach(p -> {
             if (!LoginPlayerHelper.isLogin(p.getName())) return;
             if (!p.isDead() || Config.Settings.DeathStateQuitRecordLocation) {
                 Config.setOfflineLocation(p);
             }
-
         });
+
         try {
             sql.getConnection().close();
         } catch (Exception e) {
@@ -174,9 +179,7 @@ public class CatSeedLogin extends JavaPlugin implements Listener {
         super.onDisable();
     }
 
-    public void runTaskAsync(Runnable runnable){
+    public void runTaskAsync(Runnable runnable) {
         CatScheduler.runTaskAsync(runnable);
     }
-
-
 }
