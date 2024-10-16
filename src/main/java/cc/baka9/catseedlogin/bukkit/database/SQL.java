@@ -1,14 +1,15 @@
 package cc.baka9.catseedlogin.bukkit.database;
 
-import cc.baka9.catseedlogin.bukkit.object.LoginPlayer;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import org.bukkit.plugin.java.JavaPlugin;
+
+import cc.baka9.catseedlogin.bukkit.object.LoginPlayer;
 
 public abstract class SQL {
     protected JavaPlugin plugin;
@@ -37,42 +38,51 @@ public abstract class SQL {
             }
         }
 
+        try {
+            flush(new BufferStatement("ALTER TABLE accounts ADD ipsRec CHAR(255)"));
+        } catch (Exception e) {
+            if (!e.getMessage().toLowerCase().contains("duplicate column name")) {
+                throw e;
+            }
+        }
+
     }
 
 
-    public void add(LoginPlayer lp) throws Exception{
-        flush(new BufferStatement("INSERT INTO accounts (name,password,lastAction,email,ips) VALUES(?,?,?,?,?)",
-                lp.getName(), lp.getPassword(), new Date(), lp.getEmail(), lp.getIps()));
-        Cache.refresh(lp.getName());
-    }
+public void add(LoginPlayer lp) throws Exception{
+    flush(new BufferStatement("INSERT INTO accounts (name,password,lastAction,email,ips,ipsRec) VALUES(?,?,?,?,?,?)",
+            lp.getName(), lp.getPassword(), new Date(), lp.getEmail(), lp.getIps(), lp.getIpsRec()));
+    Cache.refresh(lp.getName());
+}
 
     public void del(String name) throws Exception{
         flush(new BufferStatement("DELETE FROM accounts WHERE name = ?", name));
         Cache.refresh(name);
     }
 
-    public void edit(LoginPlayer lp) throws Exception{
-        flush(new BufferStatement("UPDATE accounts SET password = ?, lastAction = ?, email = ?, ips = ? WHERE name= ?"
-                , lp.getPassword(), new Date(), lp.getEmail(), lp.getIps(), lp.getName()));
-        Cache.refresh(lp.getName());
-    }
+public void edit(LoginPlayer lp) throws Exception{
+    flush(new BufferStatement("UPDATE accounts SET password = ?, lastAction = ?, email = ?, ips = ?, ipsRec = ? WHERE name= ?"
+            , lp.getPassword(), new Date(), lp.getEmail(), lp.getIps(), lp.getIpsRec(), lp.getName()));
+    Cache.refresh(lp.getName());
+}
 
-    public LoginPlayer get(String name) throws Exception{
-        PreparedStatement ps = new BufferStatement("SELECT * FROM accounts WHERE name = ?",
-                name).prepareStatement(getConnection());
+public LoginPlayer get(String name) throws Exception{
+    PreparedStatement ps = new BufferStatement("SELECT * FROM accounts WHERE name = ?",
+            name).prepareStatement(getConnection());
 
-        ResultSet resultSet = ps.executeQuery();
-        LoginPlayer lp = null;
-        if (resultSet.next()) {
-            lp = new LoginPlayer(name, resultSet.getString("password"));
-            lp.setLastAction(resultSet.getTimestamp("lastAction").getTime());
-            lp.setEmail(resultSet.getString("email"));
-            lp.setIps(resultSet.getString("ips"));
-        }
-        resultSet.close();
-        ps.close();
-        return lp;
+    ResultSet resultSet = ps.executeQuery();
+    LoginPlayer lp = null;
+    if (resultSet.next()) {
+        lp = new LoginPlayer(name, resultSet.getString("password"));
+        lp.setLastAction(resultSet.getTimestamp("lastAction").getTime());
+        lp.setEmail(resultSet.getString("email"));
+        lp.setIps(resultSet.getString("ips"));
+        lp.setIpsRec(resultSet.getString("ipsRec"));
     }
+    resultSet.close();
+    ps.close();
+    return lp;
+}
 
     public List<LoginPlayer> getAll() throws Exception{
         PreparedStatement ps = new BufferStatement("SELECT * FROM accounts").prepareStatement(getConnection());

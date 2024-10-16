@@ -1,14 +1,14 @@
 package cc.baka9.catseedlogin.bukkit.object;
 
-import cc.baka9.catseedlogin.util.Crypt;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+
+import cc.baka9.catseedlogin.util.Crypt;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 @ToString
 @Getter
@@ -19,6 +19,7 @@ public class LoginPlayer {
     private String email;
     private String ips;
     private long lastAction;
+    private String ipsRec;
 
     @Override
     public boolean equals(Object o){
@@ -50,5 +51,12 @@ public class LoginPlayer {
         password = Crypt.encrypt(name, password);
     }
 
+    public String getIpsRec() {
+        return ipsRec;
+    }
+
+    public void setIpsRec(String ipsRec) {
+        this.ipsRec = ipsRec;
+    }
 
 }

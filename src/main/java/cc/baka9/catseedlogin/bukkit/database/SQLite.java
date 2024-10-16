@@ -22,8 +22,8 @@ public class SQLite extends SQL {
     }
 
     private Connection createConnection() throws SQLException {
+        ensureDataFolderExists();
         try {
-            ensureDataFolderExists();
             Class.forName("org.sqlite.JDBC");
             return DriverManager.getConnection("jdbc:sqlite:" + plugin.getDataFolder().getAbsolutePath() + "/accounts.db");
         } catch (ClassNotFoundException e) {
