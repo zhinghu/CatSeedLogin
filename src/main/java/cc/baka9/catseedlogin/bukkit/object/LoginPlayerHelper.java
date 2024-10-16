@@ -146,7 +146,7 @@ public class LoginPlayerHelper {
     }
 
     // 记录登录IP
-        public static void recordCurrentIP(Player player, LoginPlayer lp){
+    public static void recordCurrentIP(Player player, LoginPlayer lp){
         String currentIp = player.getAddress().getAddress().getHostAddress();
         List<String> ipsList = lp.getIpsList();
         ipsList.add(currentIp);
@@ -155,6 +155,7 @@ public class LoginPlayerHelper {
             ipsList.remove(0);
         }
         lp.setIps(String.join(";", ipsList));
+        lp.setIpsRec(currentIp);
         CatSeedLogin.instance.runTaskAsync(() -> {
             try {
                 CatSeedLogin.sql.edit(lp);
