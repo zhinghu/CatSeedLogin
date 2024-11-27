@@ -163,14 +163,15 @@ public class CatSeedLogin extends JavaPlugin implements Listener {
     public void onDisable() {
         Task.cancelAll();
         Bukkit.getOnlinePlayers().forEach(p -> {
-            if (!LoginPlayerHelper.isLogin(p.getName())) return;
-            if (!p.isDead() || Config.Settings.DeathStateQuitRecordLocation) {
+            if (LoginPlayerHelper.isLogin(p.getName()) && (!p.isDead() || Config.Settings.DeathStateQuitRecordLocation)) {
                 Config.setOfflineLocation(p);
             }
         });
 
         try {
-            sql.getConnection().close();
+            if (sql.getConnection() != null) { // 检查连接不为null
+                sql.getConnection().close();
+            }
         } catch (Exception e) {
             getLogger().warning("获取数据库连接时出错");
             e.printStackTrace();
@@ -180,6 +181,8 @@ public class CatSeedLogin extends JavaPlugin implements Listener {
     }
 
     public void runTaskAsync(Runnable runnable) {
-        CatScheduler.runTaskAsync(runnable);
+        if (runnable != null) {  // 添加空值检查
+            CatScheduler.runTaskAsync(runnable);
+        }
     }
 }

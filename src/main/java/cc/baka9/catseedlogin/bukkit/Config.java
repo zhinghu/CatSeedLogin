@@ -281,17 +281,14 @@ public class Config {
     }
 
     // 获取玩家退出服务器时的位置
-    public static Optional<Location> getOfflineLocation(Player player){
-        String data = offlineLocations.get(player.getName());
-        return data == null ? Optional.empty() : Optional.of(str2Location(data));
+    public static Optional<Location> getOfflineLocation(Player player) {
+        return Optional.ofNullable(offlineLocations.get(player.getName()))
+                       .map(Config::str2Location);
     }
 
     // 保存玩家退出服务器的位置
-    public static void setOfflineLocation(Player player){
-        String name = player.getName();
-        String data = loc2String(player.getLocation());
-        offlineLocations.put(name, data);
-        plugin.getConfig().set("offlineLocations." + name, data);
+    public static void setOfflineLocation(Player player) {
+        plugin.getConfig().set("offlineLocations." + player.getName(), loc2String(player.getLocation()));
         plugin.saveConfig();
     }
 
