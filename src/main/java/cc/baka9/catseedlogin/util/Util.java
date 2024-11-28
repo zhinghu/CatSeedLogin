@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
 import java.util.regex.Pattern;
-
 import org.apache.commons.lang3.RandomStringUtils;
 
 public class Util {
@@ -32,7 +31,6 @@ public class Util {
     }
 
     public static boolean isOSLinux() {
-        String os = System.getProperty("os.name");
-        return os != null && os.toLowerCase().contains("linux");
+        return System.getProperty("os.name").toLowerCase().contains("linux");
     }
 }
