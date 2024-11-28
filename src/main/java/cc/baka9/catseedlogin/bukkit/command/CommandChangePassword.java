@@ -1,13 +1,11 @@
 package cc.baka9.catseedlogin.bukkit.command;
 
 import java.util.Objects;
-
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
 import cc.baka9.catseedlogin.bukkit.CatScheduler;
 import cc.baka9.catseedlogin.bukkit.CatSeedLogin;
 import cc.baka9.catseedlogin.bukkit.Config;
@@ -19,14 +17,10 @@ import cc.baka9.catseedlogin.util.Util;
 
 public class CommandChangePassword implements CommandExecutor {
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String lable, String[] args){
-        if (args.length != 3 || !(sender instanceof Player)) {
-            return false;
-        }
+    public boolean onCommand(CommandSender sender, Command command, String lable, String[] args) {
+        if (args.length != 3 || !(sender instanceof Player)) return false;
         String name = sender.getName();
-        if (Config.Settings.BedrockLoginBypass && LoginPlayerHelper.isFloodgatePlayer((Player) sender)){
-            return true;
-        }
+        if (Config.Settings.BedrockLoginBypass && LoginPlayerHelper.isFloodgatePlayer((Player) sender)) return true;
         LoginPlayer lp = Cache.getIgnoreCase(name);
         if (lp == null) {
             sender.sendMessage(Config.Language.CHANGEPASSWORD_NOREGISTER);
@@ -39,7 +33,6 @@ public class CommandChangePassword implements CommandExecutor {
         if (!Objects.equals(Crypt.encrypt(name, args[0]), lp.getPassword().trim())) {
             sender.sendMessage(Config.Language.CHANGEPASSWORD_OLDPASSWORD_INCORRECT);
             return true;
-
         }
         if (!args[1].equals(args[2])) {
             sender.sendMessage(Config.Language.CHANGEPASSWORD_PASSWORD_CONFIRM_FAIL);
@@ -49,9 +42,7 @@ public class CommandChangePassword implements CommandExecutor {
             sender.sendMessage(Config.Language.COMMON_PASSWORD_SO_SIMPLE);
             return true;
         }
-        if (!Cache.isLoaded) {
-            return true;
-        }
+        if (!Cache.isLoaded) return true;
         sender.sendMessage("§e修改中..");
         CatSeedLogin.instance.runTaskAsync(() -> {
             try {
@@ -59,7 +50,6 @@ public class CommandChangePassword implements CommandExecutor {
                 lp.crypt();
                 CatSeedLogin.sql.edit(lp);
                 LoginPlayerHelper.remove(lp);
-
                 CatScheduler.runTask(() -> {
                     Player player = Bukkit.getPlayer(((Player) sender).getUniqueId());
                     if (player != null && player.isOnline()) {
@@ -71,11 +61,8 @@ public class CommandChangePassword implements CommandExecutor {
                                 LoginPlayerHelper.sendBlankInventoryPacket(player);
                             }
                         }
-
                     }
                 });
-
-
             } catch (Exception e) {
                 e.printStackTrace();
                 sender.sendMessage("§c服务器内部错误!");
