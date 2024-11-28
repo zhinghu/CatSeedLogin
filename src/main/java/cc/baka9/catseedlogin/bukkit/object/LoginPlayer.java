@@ -14,41 +14,28 @@ import java.util.Objects;
 @Getter
 @Setter
 public class LoginPlayer {
-    private String name;
-    private String password;
-    private String email;
-    private String ips;
+    private String name, password, email, ips;
     private long lastAction;
 
-    @Override
-    public boolean equals(Object o){
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        LoginPlayer that = (LoginPlayer) o;
-        return Objects.equals(name, that.name);
-    }
-
-    public List<String> getIpsList(){
-        List<String> ipList = new ArrayList<>();
-        if (this.ips != null) {
-            ipList.addAll(Arrays.asList(this.ips.split(";")));
-        }
-        return ipList;
+    public LoginPlayer(String name, String password) {
+        this.name = name; this.password = password;
     }
 
     @Override
-    public int hashCode(){
+    public boolean equals(Object o) {
+        return this == o || (o instanceof LoginPlayer && Objects.equals(name, ((LoginPlayer) o).name));
+    }
+
+    @Override
+    public int hashCode() {
         return Objects.hash(name);
     }
 
-    public LoginPlayer(String name, String password){
-        this.name = name;
-        this.password = password;
+    public List<String> getIpsList() {
+        return (ips != null) ? new ArrayList<>(Arrays.asList(ips.split(";"))) : new ArrayList<>();
     }
 
-    public void crypt(){
+    public void crypt() {
         password = Crypt.encrypt(name, password);
     }
-
-
 }
