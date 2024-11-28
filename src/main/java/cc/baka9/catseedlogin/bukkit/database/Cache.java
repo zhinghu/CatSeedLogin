@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
 import cc.baka9.catseedlogin.bukkit.CatSeedLogin;
 import cc.baka9.catseedlogin.bukkit.object.LoginPlayer;
 
@@ -12,17 +11,17 @@ public class Cache {
     private static final Map<String, LoginPlayer> PLAYER_HASHTABLE = new ConcurrentHashMap<>();
     public static volatile boolean isLoaded = false;
 
-    public static List<LoginPlayer> getAllLoginPlayer(){
+    public static List<LoginPlayer> getAllLoginPlayer() {
         synchronized (PLAYER_HASHTABLE) {
             return new ArrayList<>(PLAYER_HASHTABLE.values());
         }
     }
 
-    public static LoginPlayer getIgnoreCase(String name){
+    public static LoginPlayer getIgnoreCase(String name) {
         return PLAYER_HASHTABLE.get(name.toLowerCase());
     }
 
-    public static void refreshAll(){
+    public static void refreshAll() {
         isLoaded = false;
         CatSeedLogin.instance.runTaskAsync(() -> {
             try {
@@ -40,7 +39,7 @@ public class Cache {
         });
     }
 
-    public static void refresh(String name){
+    public static void refresh(String name) {
         CatSeedLogin.instance.runTaskAsync(() -> {
             try {
                 LoginPlayer newLp = CatSeedLogin.sql.get(name);
