@@ -24,6 +24,7 @@ public class CatScheduler {
     }
 
     public static void teleport(Player player, Location location) {
+        if (location == null || location.getWorld() == null) return;
         if (!folia) {
             player.teleport(location);
             return;

@@ -13,16 +13,8 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import cc.baka9.catseedlogin.bukkit.command.CommandBindEmail;
-import cc.baka9.catseedlogin.bukkit.command.CommandCatSeedLogin;
-import cc.baka9.catseedlogin.bukkit.command.CommandChangePassword;
-import cc.baka9.catseedlogin.bukkit.command.CommandLogin;
-import cc.baka9.catseedlogin.bukkit.command.CommandRegister;
-import cc.baka9.catseedlogin.bukkit.command.CommandResetPassword;
-import cc.baka9.catseedlogin.bukkit.database.Cache;
-import cc.baka9.catseedlogin.bukkit.database.MySQL;
-import cc.baka9.catseedlogin.bukkit.database.SQL;
-import cc.baka9.catseedlogin.bukkit.database.SQLite;
+import cc.baka9.catseedlogin.bukkit.command.*;
+import cc.baka9.catseedlogin.bukkit.database.*;
 import cc.baka9.catseedlogin.bukkit.object.LoginPlayerHelper;
 import cc.baka9.catseedlogin.bukkit.task.Task;
 import cn.handyplus.lib.adapter.HandySchedulerUtil;
@@ -140,8 +132,7 @@ public class CatSeedLogin extends JavaPlugin implements Listener {
             return Collections.emptyList();
         });
 
-        PluginCommand catseedlogin = getServer().getPluginCommand("catseedlogin");
-        catseedlogin.setExecutor(new CommandCatSeedLogin());
+        getServer().getPluginCommand("catseedlogin").setExecutor(new CommandCatSeedLogin());
     }
 
     @EventHandler
@@ -169,7 +160,7 @@ public class CatSeedLogin extends JavaPlugin implements Listener {
         });
 
         try {
-            if (sql.getConnection() != null) { // 检查连接不为null
+            if (sql.getConnection() != null) { 
                 sql.getConnection().close();
             }
         } catch (Exception e) {
@@ -181,7 +172,7 @@ public class CatSeedLogin extends JavaPlugin implements Listener {
     }
 
     public void runTaskAsync(Runnable runnable) {
-        if (runnable != null) {  // 添加空值检查
+        if (runnable != null) {  
             CatScheduler.runTaskAsync(runnable);
         }
     }

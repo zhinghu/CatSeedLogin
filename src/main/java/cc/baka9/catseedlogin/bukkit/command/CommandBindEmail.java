@@ -1,13 +1,11 @@
 package cc.baka9.catseedlogin.bukkit.command;
 
 import java.util.Optional;
-
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
 import cc.baka9.catseedlogin.bukkit.CatSeedLogin;
 import cc.baka9.catseedlogin.bukkit.Config;
 import cc.baka9.catseedlogin.bukkit.database.Cache;
@@ -25,9 +23,7 @@ public class CommandBindEmail implements CommandExecutor {
         Player player = (Player) sender;
         String name = player.getName();
 
-        if (Config.Settings.BedrockLoginBypass && LoginPlayerHelper.isFloodgatePlayer(player)) {
-            return true;
-        }
+        if (Config.Settings.BedrockLoginBypass && LoginPlayerHelper.isFloodgatePlayer(player)) return true;
 
         LoginPlayer lp = Cache.getIgnoreCase(name);
         if (lp == null) {
@@ -93,11 +89,10 @@ public class CommandBindEmail implements CommandExecutor {
     private void sendEmailCode(CommandSender sender, String name, String mail, EmailCode bindEmail) {
         CatSeedLogin.instance.runTaskAsync(() -> {
             try {
-                Mail.sendMail(mail, "邮箱绑定",
-                        "你的验证码是 <strong>" + bindEmail.getCode() + "</strong>" +
-                                "<br/>在服务器中使用帐号 " + name + " 输入指令<strong>/bindemail verify " + bindEmail.getCode() + "</strong> 来绑定邮箱" +
-                                "<br/>绑定邮箱之后可用于忘记密码时重置自己的密码" +
-                                "<br/>此验证码有效期为 " + (bindEmail.getDurability() / (1000 * 60)) + "分钟");
+                Mail.sendMail(mail, "邮箱绑定", "你的验证码是 <strong>" + bindEmail.getCode() + "</strong>" +
+                        "<br/>在服务器中使用帐号 " + name + " 输入指令<strong>/bindemail verify " + bindEmail.getCode() + "</strong> 来绑定邮箱" +
+                        "<br/>绑定邮箱之后可用于忘记密码时重置自己的密码" +
+                        "<br/>此验证码有效期为 " + (bindEmail.getDurability() / (1000 * 60)) + "分钟");
                 Bukkit.getScheduler().runTask(CatSeedLogin.instance, () -> {
                     sender.sendMessage("§6已经向邮箱 " + mail + " 发送了一串绑定验证码，请检查你的邮箱的收件箱");
                     sender.sendMessage("§c如果未收到，请检查邮箱的垃圾箱!");
