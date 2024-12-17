@@ -50,7 +50,7 @@ public class Communication {
     /**
      * 启动 socket server 监听bc端发来的请求
      */
-    private static void socketServerStart() {
+    public static void socketServerStart() {
         try {
             InetAddress inetAddress = InetAddress.getByName(Config.BungeeCord.Host);
             serverSocket = new ServerSocket(Integer.parseInt(Config.BungeeCord.Port), 50, inetAddress);
@@ -97,9 +97,9 @@ public class Communication {
     private static void handleKeepLoggedInRequest(String playerName, String time, String sign) {
         // 验证请求的合法性
         // 对比玩家名，时间戳，和authKey加密的结果（加密是因为如果登录服不在内网环境下，则可能会被人使用这个功能给发包来直接绕过登录）
-        if (CommunicationAuth.encryption(playerName, time, Config.BungeeCord.AuthKey).equals(sign)) {
+        if (sign.equals(CommunicationAuth.encryption(playerName, time, Config.BungeeCord.AuthKey))) {
             // 切换主线程给予登录状态
-            Bukkit.getScheduler().runTask(CatSeedLogin.instance, () -> {
+            CatScheduler.runTask( () -> {
                 LoginPlayer lp = Cache.getIgnoreCase(playerName);
                 if (lp != null) {
                     LoginPlayerHelper.add(lp);
@@ -115,9 +115,9 @@ public class Communication {
 
     private static void handleConnectRequest(Socket socket, String playerName) {
         // 切换主线程获取是否已登录
-        Bukkit.getScheduler().runTask(CatSeedLogin.instance, () -> {
+        CatScheduler.runTask( () -> {
             boolean result = LoginPlayerHelper.isLogin(playerName);
-
+            
             // 切换异步线程返回结果
             CatSeedLogin.instance.runTaskAsync(() -> {
                 try {
