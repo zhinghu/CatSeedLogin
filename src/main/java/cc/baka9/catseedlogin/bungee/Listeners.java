@@ -86,7 +86,7 @@ public class Listeners implements Listener {
     public void onPreLogin(PreLoginEvent event) {
         String playerName = event.getConnection().getName();
         try {
-            if (loggedInPlayerList.contains(playerName) || Communication.sendConnectRequest(playerName) == 1) {
+            if (loggedInPlayerList.contains(playerName) && (Communication.sendConnectRequest(playerName) == 1)) {
                 event.setCancelReason(new TextComponent("您已经登录，请勿重复登录。"));
                 event.setCancelled(true);
             }
