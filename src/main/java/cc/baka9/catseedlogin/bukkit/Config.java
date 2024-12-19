@@ -282,8 +282,7 @@ public class Config {
 
     // 获取玩家退出服务器时的位置
     public static Optional<Location> getOfflineLocation(Player player) {
-        return Optional.ofNullable(offlineLocations.get(player.getName()))
-                       .map(Config::str2Location);
+        return Optional.ofNullable(plugin.getConfig().getString("offlineLocations." + player.getName())).map(Config::str2Location);
     }
 
     // 保存玩家退出服务器的位置
