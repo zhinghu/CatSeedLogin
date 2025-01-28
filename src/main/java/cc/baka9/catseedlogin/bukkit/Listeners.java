@@ -67,7 +67,7 @@ public class Listeners implements Listener {
         long count = Bukkit.getOnlinePlayers().stream()
                 .filter(p -> p.getAddress().getAddress().getHostAddress().equals(hostAddress))
                 .count();
-        if (count >= Config.Settings.IpCountLimit) {
+        if (!event.getAddress().isLoopbackAddress() && count >= Config.Settings.IpCountLimit) {
             event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, "太多相同ip的账号同时在线!");
         }
     }
