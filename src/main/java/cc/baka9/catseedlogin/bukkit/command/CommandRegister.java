@@ -44,7 +44,7 @@ public class CommandRegister implements CommandExecutor {
             try {
                 String currentIp = player.getAddress().getAddress().getHostAddress();
                 List<LoginPlayer> LoginPlayerListlikeByIp = CatSeedLogin.sql.getLikeByIp(currentIp);
-                if (LoginPlayerListlikeByIp.size() >= Config.Settings.IpRegisterCountLimit) {
+                if (!player.getAddress().getAddress().isLoopbackAddress() && LoginPlayerListlikeByIp.size() >= Config.Settings.IpRegisterCountLimit) {
                     sender.sendMessage(Config.Language.REGISTER_MORE
                             .replace("{count}", String.valueOf(LoginPlayerListlikeByIp.size()))
                             .replace("{accounts}", String.join(", ", LoginPlayerListlikeByIp.stream().map(LoginPlayer::getName).toArray(String[]::new))));
