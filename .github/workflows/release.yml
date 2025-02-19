@@ -1,0 +1,122 @@
+name: 自动构建与发布
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+      actions: read
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 获取项目信息
+        id: project-info
+        run: |
+          # 从pom.xml提取项目信息
+          PROJECT_NAME=$(mvn help:evaluate -Dexpression=project.name -q -DforceStdout | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+          if [ "$PROJECT_NAME" = "null" ]; then
+            PROJECT_NAME=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
+          fi
+          
+          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout | tr -d '\n')
+          
+          echo "name=${PROJECT_NAME}" >> $GITHUB_OUTPUT
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+
+      - name: 设置Java环境
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Maven构建项目
+        run: mvn -B clean package
+
+      - name: 验证构建结果
+        run: |
+          if [ ! -d "target" ]; then
+            echo "::error::构建失败，未生成target目录"
+            exit 1
+          fi
+          echo "=== 构建产物 ==="
+          ls -lh target/
+
+      - name: 获取提交信息
+        id: get-commit
+        run: |
+          COMMIT_MSG=$(git log -1 --pretty=format:%B)
+          echo "commit_msg<<EOF" >> $GITHUB_OUTPUT
+          echo "$COMMIT_MSG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: 计算文件哈希
+        id: file-hashes
+        run: |
+          set -euo pipefail
+
+          echo "## 📦 文件校验哈希" > hashes.md
+          echo '```' >> hashes.md
+
+          found_files=false
+          for file in target/*.jar; do
+            if [[ -f "$file" ]]; then
+              hash=$(sha256sum "$file" | awk '{print $1}')
+              filename=$(basename "$file")
+              echo "${filename}: ${hash}" >> hashes.md
+              found_files=true
+            fi
+          done
+
+          if [[ "$found_files" == false ]]; then
+            echo "::warning::未找到可校验文件"
+            echo "hash_content=未生成校验信息" >> $GITHUB_OUTPUT
+          else
+            echo '```' >> hashes.md
+            echo "hash_content<<EOF" >> $GITHUB_OUTPUT
+            cat hashes.md >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
+
+      - name: 记录构建时间
+        id: get-date
+        run: |
+          echo "date=$(date +'%Y年%m月%d日 %H时%M分%S秒')" >> $GITHUB_OUTPUT
+
+      - name: 创建版本发布
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.project-info.outputs.version }}
+          name: ${{ steps.project-info.outputs.name }}-v${{ steps.project-info.outputs.version }}
+          body: |
+            ## 📝 提交信息
+            ```
+            ${{ steps.get-commit.outputs.commit_msg }}
+            ```
+
+            ## 🔧 构建详情
+            - 项目名称: ${{ steps.project-info.outputs.name }}
+            - 版本号: ${{ steps.project-info.outputs.version }}
+            - 提交哈希: [${{ github.sha }}](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})
+            - 构建时间: ${{ steps.get-date.outputs.date }}
+
+            ## 🔍 文件校验
+            ${{ steps.file-hashes.outputs.hash_content }}
+
+            > 本发布由 GitHub Actions 自动生成
+          files: |
+            target/*.jar
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
