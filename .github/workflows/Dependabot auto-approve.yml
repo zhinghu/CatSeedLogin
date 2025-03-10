@@ -1,8 +1,9 @@
-name: Dependabot auto-approve
+name: Dependabot auto-approve and merge
 on: pull_request
 
 permissions:
   pull-requests: write
+  contents: write
 
 jobs:
   dependabot:
@@ -16,6 +17,11 @@ jobs:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
       - name: Approve a PR
         run: gh pr review --approve "$PR_URL"
+        env:
+          PR_URL: ${{github.event.pull_request.html_url}}
+          GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      - name: Merge PR
+        run: gh pr merge --rebase "$PR_URL"
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
           GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
